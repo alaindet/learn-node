@@ -11,14 +11,14 @@ const requestHandler = (req, res) => {
       '<html>',
       '<head><title>Node.js demo</title></head>',
       '<body>',
-      '<form action="/message" method="POST">',
-      '<input ',
-      'type="text" ',
-      'name="message" ',
-      'placeholder="Enter a message..." ',
-      '>',
-      '<button type="submit">Submit</button>',
-      '</form>',
+        '<form action="/message" method="POST">',
+          '<input ',
+            'type="text" ',
+            'name="message" ',
+            'placeholder="Enter a message..." ',
+          '>',
+          '<button type="submit">Submit</button>',
+        '</form>',
       '</body>',
       '</html>',
     ].map(line => res.write(line));
@@ -47,7 +47,9 @@ const requestHandler = (req, res) => {
   [
     '<html>',
     '<head><title>Node.js demo</title></head>',
-    '<body>Page not found</body>',
+    '<body>',
+      '404 Page not found',
+    '</body>',
     '</html>',
   ].map(line => res.write(line));
   return res.end();

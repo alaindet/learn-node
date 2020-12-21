@@ -1,8 +1,9 @@
 const path = require('path');
 
-const ROOT = path.dirname(process.mainModule.filename);
+const ROOT_DIR = path.dirname(process.mainModule.filename);
 
 module.exports = {
-  ROOT,
-  VIEWS: path.join(ROOT, 'views'),
+  ROOT_DIR,
+  VIEWS_DIR: path.join(ROOT_DIR, 'views'),
+  PUBLIC_DIR: path.join(ROOT_DIR, 'public'),
 };

@@ -4,24 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Product</title>
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 
   <!-- Navigation -->
-  <header>
-    <nav>
-      <ul>
-        <li><a href="/">Shop</a></li>
-        <li><a href="/products">Products</a></li>
-        <li><a href="/admin/products/create">Create Product</a></li>
+  <header class="main-header">
+    <nav class="main-header__nav">
+      <ul class="main-header__item-list">
+        <li class="main-header__item">
+          <a href="/">Shop</a>
+        </li>
+        <li class="main-header__item">
+          <a href="/products">Products</a>
+        </li>
+        <li class="main-header__item">
+          <a href="/admin/products/create" class="active">
+            Create Product
+          </a>
+        </li>
       </ul>
     </nav>
   </header>
 
   <!-- Content -->
   <main>
-    <form action="/products" method="POST">
-      <input type="text" name="title">
+    <form action="/admin/products" method="POST" class="product-form">
+      <div class="form-control">
+        <label>Title</label>
+        <input type="text" name="title" placeholder="Title...">
+      </div>
       <button type="submit">Create Product</button>
     </form>
   </main>

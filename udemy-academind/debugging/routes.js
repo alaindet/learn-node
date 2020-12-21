@@ -1,4 +1,5 @@
 const fs = require('fs');
+const outputHtml = require('./utils/output-html');
 
 const requestHandler = (req, res) => {
 
@@ -6,22 +7,18 @@ const requestHandler = (req, res) => {
   const method = req.method;
 
   if (url === '/') {
+    const content = `
+      <form action="/message" method="POST">
+        <input 
+          type="text"
+          name="message"
+          placeholder="Enter a message..."
+        >
+        <button type="submit">Submit</button>
+      </form>
+    `;
     res.setHeader('Content-Type', 'text/html');
-    [
-      '<html>',
-      '<head><title>Node.js demo</title></head>',
-      '<body>',
-        '<form action="/message" method="POST">',
-          '<input ',
-            'type="text" ',
-            'name="message" ',
-            'placeholder="Enter a message..." ',
-          '>',
-          '<button type="submit">Submit</button>',
-        '</form>',
-      '</body>',
-      '</html>',
-    ].map(line => res.write(line));
+    res.write(outputHtml(content));
     return res.end();
   }
 
@@ -33,7 +30,7 @@ const requestHandler = (req, res) => {
     });
     return req.on('end', () => {
       const parsedBody = Buffer.concat(body).toString();
-      const message = parsedBody.split('=')[1];
+      const message = parsedBody.split('=')[0]; // <== ERROR!
       fs.writeFile('message.txt', message, (err) => {
         res.statusCode = 302;
         res.setHeader('Location', '/');
@@ -43,15 +40,11 @@ const requestHandler = (req, res) => {
   }
 
   // Not found
+  const content = `
+    <p>404 Page not found</p>
+  `;
   res.setHeader('Content-Type', 'text/html');
-  [
-    '<html>',
-    '<head><title>Node.js demo</title></head>',
-    '<body>',
-      '404 Page not found',
-    '</body>',
-    '</html>',
-  ].map(line => res.write(line));
+  res.write(outputHtml(content));
   return res.end();
 };
 

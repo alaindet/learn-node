@@ -1,18 +1,18 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use('/', (req, res, next) => {
-  console.log('Hooked into the system', req.url);
-  next();
-});
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const notFoundRoute = require('./routes/404');
 
-app.use('/products', (req, res, next) => {
-  res.send('<h1>Products</h1>');
-});
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
-app.use('/', (req, res, next) => {
-  res.send('<h1>Hello from Express</h1>');
-});
+app.use(shopRoutes);
+app.use('/admin', adminRoutes); // Add '/admin' prefix
+app.use(notFoundRoute);
 
 app.listen(3000);

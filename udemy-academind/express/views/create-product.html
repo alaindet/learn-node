@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Product</title>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="/">Shop</a></li>
+        <li><a href="/products">Products</a></li>
+        <li><a href="/admin/products/create">Create Product</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Content -->
+  <main>
+    <form action="/products" method="POST">
+      <input type="text" name="title">
+      <button type="submit">Create Product</button>
+    </form>
+  </main>
+
+</body>
+</html>

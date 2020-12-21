@@ -1,26 +1,16 @@
 const express = require('express');
+const path = require('path');
+
+const { VIEWS } = require('../utils/path');
 
 const router = express.Router();
 
 router.get('/products', (req, res) => {
-  res.send(`
-    <h1>Products</h1>
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/admin/products/create">Create product</a></li>
-    </ul>
-    <hr>
-  `);
+  res.sendFile(path.join(VIEWS, 'products.html'));
 });
 
 router.get('/', (req, res) => {
-  res.send(`
-    <h1>Home</h1>
-    <ul>
-      <li><a href="/admin/products/create">Create product</a></li>
-      <li><a href="/products">Products</a></li>
-    </ul>
-  `);
+  res.sendFile(path.join(VIEWS, 'home.html'));
 });
 
 module.exports = router;

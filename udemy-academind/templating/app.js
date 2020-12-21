@@ -13,21 +13,27 @@ const shopRoutes = require('./routes/shop');
 // app.set('view engine', 'pug');
 // app.set('views', './views/pug');
 
-// Template enging: Express Handlebars
-app.engine('hbs', expressHandlebars({
-  layoutsDir: './views/hbs/layouts/',
-  defaultLayout: 'main',
-  extname: 'hbs',
-}));
-app.set('view engine', 'hbs');
-app.set('views', './views/hbs');
+// // Template enging: Express Handlebars
+// app.engine('hbs', expressHandlebars({
+//   layoutsDir: './views/hbs/layouts/',
+//   defaultLayout: 'main',
+//   extname: 'hbs',
+// }));
+// app.set('view engine', 'hbs');
+// app.set('views', './views/hbs');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Template engine: ejs
+app.set('view engine', 'ejs');
+app.set('views', './views/ejs');
+
+// Routes
 app.use('/admin', adminData.router);
 app.use(shopRoutes);
 
+// Not found
 app.use((req, res, next) => {
   res.render('pages/404', {
     title: 'Page not found'

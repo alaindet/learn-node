@@ -1,0 +1,29 @@
+{
+  "name": "improved",
+  "version": "1.0.0",
+  "description": "Complete Node.js Guide",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev:start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaindet/learn-node.git"
+  },
+  "keywords": [
+    "node",
+    "learn",
+    "udemy"
+  ],
+  "author": "Alain D'Ettorre <alain.det@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alaindet/learn-node/issues"
+  },
+  "homepage": "https://github.com/alaindet/learn-node#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}

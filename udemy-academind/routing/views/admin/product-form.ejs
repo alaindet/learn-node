@@ -1,0 +1,109 @@
+<%- include('../includes/head.ejs') %>
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+  <%- include('../includes/navigation.ejs') %>
+
+  <main>
+    <form
+      class="product-form"
+      method="POST"
+      <% if (action === 'create') { %>
+        action="/admin/add-product"
+      <% } else if (action === 'edit') { %>
+        action="/admin/edit-product/<%= product.id %>"
+      <% } else if (action === 'delete') { %>
+        action="/admin/delete-product/<%= product.id %>"
+      <% } %>
+    >
+      <!-- Title -->
+      <div class="form-control">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          <% if (action === 'edit') { %>
+            value="<%= product.title %>"
+          <% } else if (action === 'delete') { %>
+            value="<%= product.title %>"
+            disabled
+          <% } %>
+        >
+      </div>
+
+      <!-- Image -->
+      <div class="form-control">
+        <label for="imageUrl">Image URL</label>
+        <input
+          type="text"
+          name="imageUrl"
+          id="imageUrl"
+          <% if (action === 'edit') { %>
+            value="<%= product.imageUrl %>"
+          <% } else if (action === 'delete') { %>
+            value="<%= product.imageUrl %>"
+            disabled
+          <% } %>
+        >
+      </div>
+
+      <!-- Price -->
+      <div class="form-control">
+        <label for="price">Price</label>
+        <input
+          type="number"
+          name="price"
+          id="price"
+          step="0.01"
+          <% if (action === 'edit') { %>
+            value="<%= product.price %>"
+          <% } else if (action === 'delete') { %>
+            value="<%= product.price %>"
+            disabled
+          <% } %>
+        >
+      </div>
+      
+      <!-- Description -->
+      <div class="form-control">
+        <label for="description">Description</label>
+        <textarea
+          name="description"
+          id="description"
+          rows="5"
+          <% if (action === 'delete') { %>
+            disabled
+          <% } %>
+        ><%= locals.product ? product.description : '' %></textarea>
+      </div>
+
+      <% if (action === 'edit') { %>
+        <input type="hidden" name="id" value="<%= product.id %>">
+        <div class="form-control">
+          <a href="/admin/delete-product/<%= product.id %>">Delete product?</a>
+        </div>
+      <% } else if (action === 'delete') { %>
+        <input type="hidden" name="id" value="<%= product.id %>">
+        <div class="form-control">
+          <a href="/admin/edit-product/<%= product.id %>">Edit product?</a>
+        </div>
+      <% } %>
+
+      <!-- Submit -->
+      <button class="btn size-large" type="submit">
+        <% if (action === 'create') { %>
+          Add
+        <% } else if (action === 'edit') { %>
+          Edit
+        <% } else if (action==='delete' ) { %>
+          Delete
+        <% } %>
+        Product
+      </button>
+
+    </form>
+  </main>
+<%- include('../includes/end.ejs') %>

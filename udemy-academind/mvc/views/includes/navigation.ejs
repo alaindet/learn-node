@@ -1,0 +1,25 @@
+<%#
+VARIABLES
+page.navigation
+page.path
+%>
+<header class="main-header">
+  <nav class="main-header__nav">
+    <ul class="main-header__item-list">
+      <% if (locals.page.navigation) { %>
+        <% for (const link of page.navigation) { %>
+          <li class="main-header__item">
+            <a
+              href="<%= link.path %>"
+              <% if (link.path === page.path) { %>
+                class="active"
+              <% } %>
+            >
+              <%= link.label %>
+            </a>
+          </li>
+        <% } %>
+      <% } %>
+    </ul>
+  </nav>
+</header>

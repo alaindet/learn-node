@@ -1,0 +1,25 @@
+<%#
+VARIABLES
+page.title
+page.stylesheets
+%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>
+    <%= page.title %>
+  </title>
+  <link rel="stylesheet" href="/css/root.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <% if (locals.page.stylesheets) { %>
+    <% for (const stylesheet of page.stylesheets) { %>
+      <link rel="stylesheet" href="<%= stylesheet %>">
+    <% } %>
+  <% } %>
+</head>
+
+<body>

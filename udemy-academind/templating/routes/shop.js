@@ -1,17 +1,19 @@
 const express = require('express');
-const LINKS = require('../data/link');
+const LINKS = require('../data/links');
 const PRODUCTS = require('../data/products');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   res.render('pages/shop', {
-    title: 'Products',
-    navigation: LINKS,
-    path: '/',
-    stylesheets: [
-      '/css/product.css',
-    ],
+    page: {
+      title: 'Products',
+      navigation: LINKS,
+      path: '/',
+      stylesheets: [
+        '/css/product.css',
+      ],
+    },
     products: PRODUCTS,
   });
 });

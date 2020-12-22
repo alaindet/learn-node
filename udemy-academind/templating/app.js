@@ -1,7 +1,7 @@
 const path = require('path');
-
 const express = require('express');
 const bodyParser = require('body-parser');
+const LINKS = require('./data/links');
 
 const app = express();
 
@@ -22,7 +22,11 @@ app.use(shopRoutes);
 // Not found
 app.use((req, res, next) => {
   res.render('pages/404', {
-    title: 'Page not found'
+    page: {
+      title: 'Page not found',
+      navigation: LINKS,
+      path: null,
+    },
   });
 });
 

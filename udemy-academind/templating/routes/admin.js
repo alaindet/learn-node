@@ -1,5 +1,5 @@
 const express = require('express');
-const LINKS = require('../data/link');
+const LINKS = require('../data/links');
 const PRODUCTS = require('../data/products');
 
 const router = express.Router();
@@ -7,13 +7,15 @@ const router = express.Router();
 // /admin/add-product => GET
 router.get('/add-product', (req, res) => {
   res.render('pages/add-product', {
-    title: 'Add Product',
-    navigation: LINKS,
-    path: '/admin/add-product',
-    stylesheets: [
-      '/css/forms.css',
-      '/css/product.css',
-    ],
+    page: {
+      title: 'Add Product',
+      navigation: LINKS,
+      path: '/admin/add-product',
+      stylesheets: [
+        '/css/forms.css',
+        '/css/product.css',
+      ],
+    }
   });
 });
 

@@ -2,7 +2,8 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = (req, res) => {
-  Product.findAll()
+  req.user.getProducts()
+    // Product.findAll()
     .then(products => {
       res.render('admin/products', {
         prods: products,
@@ -22,18 +23,29 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = (req, res) => {
-  Product.create({
+  // Magic method from Sequelize based on associations
+  req.user.createProduct({
     title: req.body.title,
     imageUrl: req.body.imageUrl,
     price: req.body.price,
     description: req.body.description,
   })
+  // // Equivalent to
+  // Product.create({
+  //   title: req.body.title,
+  //   imageUrl: req.body.imageUrl,
+  //   price: req.body.price,
+  //   description: req.body.description,
+  //   userId: req.user.id,
+  // })
   .then(() => res.redirect('/'))
   .catch(error => console.error('Could not create new product', error));
 };
 
 exports.getEditProduct = (req, res) => {
-  Product.findByPk(req.params.id)
+  req.user.getProducts({ where: { id: req.params.id } })
+    .then(products => products[0])
+    // Product.findByPk(req.params.id)
     .then((product) => {
       if (!product) {
         return res.redirect('/');

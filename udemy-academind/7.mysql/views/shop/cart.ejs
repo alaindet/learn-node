@@ -1,28 +1,29 @@
 <%- include('../includes/head.ejs') %>
-  </head>
+<link rel="stylesheet" href="/css/cart.css">
+</head>
 
-  <body>
-    <%- include('../includes/navigation.ejs') %>
+<body>
+  <%- include('../includes/navigation.ejs') %>
 
-    <main>
-      <% if (products.length) { %>
-        <ul>
-          <% for (const p of products) { %>
-            <li>
-              <p>
-                <%= p.product.title %>
-                (<%= p.qty %>)
-              </p>
-              <form action="/cart/delete-item" method="POST">
-                <input type="hidden" name="id" value="<%= p.product.id %>">
-                <button class="btn" type="submit">Delete</button>
-              </form>
-            </li>
-          <% } %>
-        </ul>
-      <% } else { %>
-        <p>No products in cart</p>
-      <% } %>
-    </main>
+  <main>
+    <% if (products.length) { %>
+      <ul class="cart">
+        <% for (const p of products) { %>
+          <li class="cart-item">
+            <div class="cart-item__info">
+              <div class="cart-item__info__name"><%= p.title %></div>
+              <div class="cart-item__info__quantity"><%= p.cartItem.quantity %>x</div>
+            </div>
+            <form action="/cart/delete-item" method="POST">
+              <input type="hidden" name="id" value="<%= p.id %>">
+              <button class="btn btn-danger" type="submit">Delete</button>
+            </form>
+          </li>
+        <% } %>
+      </ul>
+    <% } else { %>
+      <p>No products in cart</p>
+    <% } %>
+  </main>
 
-    <%- include('../includes/end.ejs') %>
+  <%- include('../includes/end.ejs') %>

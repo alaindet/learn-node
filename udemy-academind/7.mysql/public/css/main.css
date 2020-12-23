@@ -185,6 +185,19 @@ form {
   background: white;
   border-radius: 3px;
   cursor: pointer;
+  transition: 0.15s background-color ease-in;
+}
+
+.btn.btn-danger {
+  color: red;
+  border-color: red;
+}
+.btn.btn-danger:hover,
+.btn.btn-danger:active,
+.btn.btn-danger:focus {
+  outline: none;
+  background-color: red;
+  color: white;
 }
 
 .btn.size-large {
@@ -192,7 +205,9 @@ form {
 }
 
 .btn:hover,
-.btn:active {
+.btn:active,
+.btn:focus {
+  outline: none;
   background-color: #00695c;
   color: white;
 }

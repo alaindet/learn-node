@@ -1,0 +1,32 @@
+.cart {
+  padding: 0;
+  list-style: none;
+  margin: 0 auto;
+  max-width: 768px;
+}
+
+.cart-item {
+  padding: 1rem 2rem;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
+  border-radius: 0.5em;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item__info {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item__info__name {
+  /* TODO */
+}
+
+.cart-item__info__quantity {
+  font-weight: bold;
+  margin: 0 2rem;
+}

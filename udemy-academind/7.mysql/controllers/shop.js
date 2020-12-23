@@ -1,19 +1,6 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
-// Private
-const getProductsInCart = (cartProducts, products) => {
-  let result = [];
-  for (const cartProduct of cartProducts) {
-    const product = products.find(aProduct => aProduct.id === cartProduct.id);
-    result = [...result, {
-      product: product,
-      qty: cartProduct.qty,
-    }];
-  }
-  return result;
-};
-
 exports.getProducts = (req, res) => {
   Product.findAll()
     .then(products => {
@@ -65,32 +52,53 @@ exports.getIndex = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  Cart.getCart(cart => {
-    Product.fetchAll(products => {
+  req.user.getCart()
+    .then(cart => cart.getProducts())
+    .then(products => {
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
-        products: getProductsInCart(cart.products, products),
+        products: products,
       });
-    });
-  });
+    })
+    .catch(err => console.log('Could not fetch the cart', err));
 };
 
 exports.postDeleteCartProduct = (req, res) => {
   const id = req.body.id;
-  Product.findByPk(id, (product) => {
-    Cart.deleteProduct(product.id, product.price, () => {
-      res.redirect('/cart');
-    });
-  });
+  req.user.getCart()
+    .then(cart => cart.getProducts({ where: { id } }))
+    .then(products => {
+      const product = products[0];
+      return product.cartItem.destroy();
+    })
+    .then(() => res.redirect('/cart'))
+    .catch(err => console.log('Could not fetch the cart', err));
 };
 
 exports.postCart = (req, res) => {
-  const productId = req.body.productId;
-  Product.findByPk(productId, product => {
-    Cart.addProduct(productId, product.price);
-  });
-  res.redirect('/cart');
+  const id = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
+  req.user.getCart()
+    .then(cart => {
+      fetchedCart = cart;
+      return cart.getProducts({ where: { id } });
+    })
+    .then(products => {
+      if (!products.length) {
+        return Product.findByPk(id)
+      }
+      const product = products[0];
+      const oldQuantity = product.cartItem.quantity;
+      newQuantity = oldQuantity + 1;
+      return product;
+    })
+    .then(product => fetchedCart.addProduct(product, {
+      through: { quantity: newQuantity }
+    }))
+    .then(() => res.redirect('/cart'))
+    .catch(err => console.log('Could not fetch the cart', err));
 };
 
 exports.getOrders = (req, res) => {

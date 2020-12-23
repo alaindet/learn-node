@@ -53,7 +53,7 @@ exports.getIndex = (req, res) => {
 
 exports.getCart = (req, res) => {
   req.user.getCart()
-    .then(cart => cart.getProducts())
+    .then(cart => cart ? cart.getProducts() : [])
     .then(products => {
       res.render('shop/cart', {
         path: '/cart',
@@ -81,7 +81,11 @@ exports.postCart = (req, res) => {
   let fetchedCart;
   let newQuantity = 1;
   req.user.getCart()
+    .then(cart => cart ? cart : req.user.createCart())
     .then(cart => {
+      if (!cart) {
+        
+      }
       fetchedCart = cart;
       return cart.getProducts({ where: { id } });
     })
@@ -102,15 +106,41 @@ exports.postCart = (req, res) => {
 };
 
 exports.getOrders = (req, res) => {
-  res.render('shop/orders', {
-    path: '/orders',
-    pageTitle: 'Your Orders'
-  });
+  req.user.getOrders({ include: ['products'] })
+    .then(orders => {
+      res.render('shop/orders', {
+        path: '/orders',
+        pageTitle: 'Your Orders',
+        orders,
+      });
+    })
+    .catch(err => console.log('Could not fetch the cart', err));
 };
 
-exports.getCheckout = (req, res) => {
-  res.render('shop/checkout', {
-    path: '/checkout',
-    pageTitle: 'Checkout'
-  });
+exports.postOrder = (req, res) => {
+  let fetchedCart;
+  req.user.getCart()
+    .then(cart => cart ? cart : req.user.createCart())
+    .then(cart => {
+      fetchedCart = cart;
+      return cart.getProducts();
+    })
+    .then(products => {
+      return req.user.createOrder()
+        .then(order => {
+          return order.addProducts(
+            products.map(product => {
+              product.orderItem = { quantity: product.cartItem.quantity };
+              return product;
+            })
+          );
+        })
+        .catch(error => console.log('Could create order', error));
+    })
+    .then(() => {
+      fetchedCart.setProducts(null);
+      fetchedCart.destroy();
+    })
+    .then(() => res.redirect('/orders'))
+    .catch(error => console.log('Could not get cart', error));
 };

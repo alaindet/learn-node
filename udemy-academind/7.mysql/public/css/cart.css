@@ -30,3 +30,8 @@
   font-weight: bold;
   margin: 0 2rem;
 }
+
+.cart__cta {
+  margin: 2rem 0;
+  text-align: center;
+}

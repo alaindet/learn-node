@@ -6,7 +6,7 @@ const shopRoutes = require('./routes/shop');
 const encodeRequestBody = require('./middlewares/encode-request-body');
 const attachUserToRequest = require('./middlewares/attach-user-to-request');
 const serveStaticFiles = require('./middlewares/serve-static-files');
-const { initUserIfNone, initCartIfNone, initAssociations } = require('./util/database-init');
+const { initUserIfNone, initAssociations } = require('./util/database-init');
 
 const app = express();
 
@@ -30,6 +30,5 @@ initAssociations();
 // sequelize.sync({ force: true }) // Refresh database structure
 sequelize.sync()
   .then(initUserIfNone)
-  .then(initCartIfNone)
   .then(() => app.listen(3000))
   .catch(error => console.error('Could not sync database', error));

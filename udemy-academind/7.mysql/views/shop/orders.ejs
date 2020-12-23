@@ -1,9 +1,26 @@
 <%- include('../includes/head.ejs') %>
-    </head>
-
-    <body>
-        <%- include('../includes/navigation.ejs') %>
-        <main>
-            <h1>Nothing there!</h1>
-        </main>
-        <%- include('../includes/end.ejs') %>
+</head>
+<body>
+  <%- include('../includes/navigation.ejs') %>
+  <main>
+    <% if (locals.orders && orders.length) { %>
+      <ul>
+        <% for (const order of orders) { %>
+          <li>
+            <h2># <%= order.id %></h2>
+            <ul>
+              <% for (const product of order.products) { %>
+                <li>
+                  <%= product.title %>
+                  (<%= product.orderItem.quantity %>)
+                </li>
+              <% } %>
+            </ul>
+          </li>
+        <% } %>
+      </ul>
+    <% } else { %>
+      <p>No orders</p>
+    <% } %>
+  </main>
+  <%- include('../includes/end.ejs') %>

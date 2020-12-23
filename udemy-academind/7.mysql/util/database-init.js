@@ -20,18 +20,6 @@ const initUserIfNone = () => {
     .catch(error => console.error('Could not create user', error));
 };
 
-const initCartIfNone = (user) => {
-  return user.getCart()
-    .then(cart => {
-      if (!cart) {
-        return user.createCart();
-      }
-      return cart;
-    })
-    .then(() => user)
-    .catch(error => console.error('Could not create cart', error));
-};
-
 const initAssociations = () => {
   User.hasMany(Product);
   Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
@@ -46,6 +34,5 @@ const initAssociations = () => {
 
 module.exports = {
   initUserIfNone,
-  initCartIfNone,
   initAssociations,
 };

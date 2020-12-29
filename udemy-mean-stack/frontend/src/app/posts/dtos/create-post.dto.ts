@@ -1,4 +1,4 @@
-export interface Post {
+export interface CreatePostDto {
   title: string;
   content: string;
 }

@@ -1,0 +1,11 @@
+- [ ] Helmet
+- [ ] Body parser
+- [ ] File uploads
+- [ ] Connect to DB
+- [ ] Validation
+- [ ] Authentication
+- [ ] Check Wanago Express TypeScript course
+- [ ] Testing
+- [ ] Dependency Injection
+- [ ] Repository Pattern and Data Mapper
+- [ ] Open API

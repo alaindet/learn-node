@@ -15,20 +15,23 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/:id', (req: Request, res: Response) => {
+  const id = req.params.id;
   return res.status(200).json({
-    message: 'Read single',
+    message: `Read single with ID ${id}`,
   });
 });
 
 router.patch('/:id', (req: Request, res: Response) => {
+  const id = req.params.id;
   return res.status(200).json({
-    message: 'Update',
+    message: `Update with ID ${id}`,
   });
 });
 
 router.delete('/:id', (req: Request, res: Response) => {
+  const id = req.params.id;
   return res.status(200).json({
-    message: 'Delete',
+    message: `Delete with ID ${id}`,
   });
 });
 

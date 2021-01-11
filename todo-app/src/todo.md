@@ -1,5 +1,5 @@
-- [ ] Helmet
-- [ ] Body parser
+- [x] Helmet
+- [x] Body parser
 - [ ] File uploads
 - [ ] Connect to DB
 - [ ] Validation

@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 
 import corsOptions from './config/cors';
 import databaseOptions from './config/database';
@@ -15,6 +16,10 @@ const app = express();
 
 // Middlewares
 app.use(cors(corsOptions));
+app.use(helmet());
+app.disable('x-powered-by');
+app.use(express.json());
+// app.use(express.urlencoded());
 
 // Routes
 app.use('/', homeController);

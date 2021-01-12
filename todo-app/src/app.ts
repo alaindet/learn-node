@@ -17,7 +17,14 @@ dotenv.config({ path: join(__dirname, '..', '.env') });
 const app = express();
 (async () => {
   try {
-    const connection = await createConnection();
+    const connection = await createConnection({
+      "type": "postgres",
+      "host": "localhost",
+      "port": 5432,
+      "username": "postgres",
+      "password": "admin",
+      "database": "todoapp",
+    });
 
     // TEST BEGIN
     let todo = new Todo();

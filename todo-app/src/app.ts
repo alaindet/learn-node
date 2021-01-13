@@ -15,25 +15,17 @@ import { Todo } from './entities/todo.entity';
 // Initialization
 dotenv.config({ path: join(__dirname, '..', '.env') });
 const app = express();
-(async () => {
-  try {
-    const connection = await createConnection({
-      "type": "postgres",
-      "host": "localhost",
-      "port": 5432,
-      "username": "postgres",
-      "password": "admin",
-      "database": "todoapp",
-    });
 
+(async() => {
+  try {
+    const connection = await createConnection();
     // TEST BEGIN
     let todo = new Todo();
+    todo.text = 'This is another thing to do';
     todo.isDone = false;
-    todo.text = 'This is a thing to do';
     await connection.manager.save(todo);
     console.log('Todo item has been saved');
     // TEST END
-
   } catch (error) {
     console.error('Could not establish a database connection');
     process.exit(1);

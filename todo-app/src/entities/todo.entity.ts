@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn  } from 'typeorm';
 
-@Entity()
+@Entity({
+  name: 'todos'
+})
 export class Todo {
 
   @PrimaryGeneratedColumn ()
@@ -9,6 +11,8 @@ export class Todo {
   @Column()
   text: string;
 
-  @Column()
+  @Column({
+    name: 'is_done'
+  })
   isDone: boolean;
 }

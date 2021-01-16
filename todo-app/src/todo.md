@@ -5,7 +5,7 @@
 - [ ] Validation
 - [ ] Authentication
 - [ ] Check Wanago Express TypeScript course
-- [ ] Testing
+- [ ] Testing (Jest, Supertest)
 - [x] Dependency Injection
 - [ ] Repository Pattern and Data Mapper
 - [ ] Open API

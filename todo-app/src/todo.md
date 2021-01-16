@@ -9,3 +9,5 @@
 - [x] Dependency Injection
 - [ ] Repository Pattern and Data Mapper
 - [ ] Open API
+- [ ] In-memory cache system
+- [ ] Database connection singleton service

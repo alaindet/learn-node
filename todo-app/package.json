@@ -1,7 +1,7 @@
 {
   "name": "todo-app",
   "version": "1.0.0",
-  "description": "A simple todo app with Express, TypeScript and Knex",
+  "description": "A simple todo app with Express and TypeScript",
   "main": "build/app.js",
   "scripts": {
     "env:dev": "cp ./.env.dev ./.env",

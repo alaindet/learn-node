@@ -1,7 +1,15 @@
-import app from './app';
+import 'reflect-metadata';
+import * as dotenv from 'dotenv';
+import { join } from 'path';
 
-app.listen(process.env['APP_PORT'], () => {
-  console.log(
-    `${process.env['APP_NAME']} app started on port ${process.env['APP_PORT']}`
-  );
-});
+import { App } from './core/app';
+import controllers from './controllers';
+import middlewares from './middlewares';
+
+dotenv.config({ path: join(__dirname, '..', '.env') });
+
+const app = new App();
+app.setPort(Number(process.env['APP_PORT']));
+app.setMiddlewares(middlewares);
+app.setControllers(controllers);
+app.start();

@@ -11,3 +11,7 @@
 - [ ] Open API
 - [ ] In-memory cache system
 - [ ] Database connection singleton service
+- [ ] Singleton config service
+- [ ] Import aliases in tsconfig.json
+- [ ] Barrel files
+- [ ] Resolve dynamic token

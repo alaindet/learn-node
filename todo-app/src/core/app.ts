@@ -1,6 +1,10 @@
+import { container } from 'tsyringe';
 import express, { Application, RequestHandler, Router, Request, Response } from 'express';
 
 import { AppController } from './types/classes/controller';
+import { AppMiddleware } from './types/classes/middleware';
+import { AppMiddlewareWithOptions } from './types/classes/middleware-with-options';
+import { Constructable } from './types/interfaces/constructable';
 
 export class App {
 
@@ -16,18 +20,29 @@ export class App {
     return this;
   }
 
-  setMiddlewares(middlewares: RequestHandler[]): this {
+  setMiddlewares(
+    middlewares: (Constructable<AppMiddleware> | AppMiddlewareWithOptions)[],
+  ): this {
     for (const middleware of middlewares) {
-      this.app.use(middleware);
+      let requestHandler: RequestHandler;
+      if (middleware instanceof AppMiddlewareWithOptions) {
+        const instance = container.resolve(middleware.constructable);
+        requestHandler = instance.register(middleware.options);
+      } else {
+        const instance = container.resolve(middleware);
+        requestHandler = instance.register();
+      }
+      this.app.use(requestHandler);
     }
     return this;
   }
 
-  setControllers(controllers: AppController[]): this {
+  setControllers(controllers: Constructable<AppController>[]): this {
     for (const controller of controllers) {
-      const router = this.configureRouter(controller);
-      (controller.path)
-        ? this.app.use(controller.path, router)
+      const controllerInstance = container.resolve(controller);
+      const router = this.configureRouter(controllerInstance);
+      (controllerInstance.path)
+        ? this.app.use(controllerInstance.path, router)
         : this.app.use(router);
     }
     return this;

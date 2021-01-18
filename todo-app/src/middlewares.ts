@@ -1,16 +1,15 @@
-import { container } from 'tsyringe';
-
-import { options as corsOptions } from './core/config/cors';
+import { AppMiddlewareWithOptions } from './core/types/classes/middleware-with-options';
 import { SecurityMiddleware } from './core/middlewares/security.middleware';
 import { CorsMiddleware } from './core/middlewares/cors.middleware';
+import { options as corsOptions } from './core/config/cors';
 import { ParseJsonMiddleware } from './core/middlewares/parse-json.middleware';
 // import { FooMiddleware } from './features/todos/middlewares/todos.middleware';
 // ...
 
 export default [
-  container.resolve(SecurityMiddleware).register(),
-  container.resolve(CorsMiddleware).register(corsOptions),
-  container.resolve(ParseJsonMiddleware).register(),
-  // container.resolve(FooMiddleware).register('Some dummy config...'),
+  SecurityMiddleware,
+  new AppMiddlewareWithOptions(CorsMiddleware, corsOptions),
+  ParseJsonMiddleware,
+  // new AppMiddlewareWithOptions(FooMiddleware, 'Some dummy config'),
   // Add middlewares here...
 ];

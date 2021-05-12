@@ -1,0 +1,37 @@
+{
+  "name": "chatio",
+  "version": "1.0.0",
+  "description": "A Simple Chat App made with Node and React",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaindet/learn-react.git"
+  },
+  "keywords": [
+    "react",
+    "node",
+    "chat",
+    "web",
+    "socket"
+  ],
+  "author": "Alain D'Ettorre <alain.det@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alaindet/learn-react/issues"
+  },
+  "homepage": "https://github.com/alaindet/learn-react#readme",
+  "devDependencies": {
+    "express": "^4.17.1"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^9.0.2",
+    "pg": "^8.6.0",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0"
+  }
+}

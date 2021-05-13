@@ -5,3 +5,11 @@
 5. `npx sequelize seed:create --name users`
 6. `npx sequelize db:seed:all`
 7. `npx sequelize db:seed:undo`
+
+## How to generate a new app key
+
+```js
+const crypto = require('crypto');
+const key = crypto.randomBytes(64).toString('hex');
+console.log(key);
+```

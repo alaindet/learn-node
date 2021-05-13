@@ -30,6 +30,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "dotenv": "^9.0.2",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0",
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0"

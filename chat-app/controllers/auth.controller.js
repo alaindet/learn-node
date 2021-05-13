@@ -1,5 +1,14 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const config = require('../config/app');
 const Model = require('../models');
+
+const generateToken = user => {
+  const { password, ...hashableUser } = user;
+  const token = jwt.sign(hashableUser, config.appKey, { expiresIn: 86400 });
+  return { ...hashableUser, token };
+};
 
 const login = async (req, res) => {
 
@@ -20,9 +29,8 @@ const login = async (req, res) => {
       return res.status(401).json({ message });
     }
 
-    // Generate Auth token
-
-    return res.json(user);
+    const userWithToken = generateToken(user.get({ raw: true }));
+    return res.json(userWithToken);
   }
 
   catch (error) {
@@ -34,12 +42,33 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
 
-  const { email, password } = req.body;
+  try {
 
-  return res.status(201).send({
-    email,
-    password,
-  });
+    const {
+      username,
+      email,
+      password,
+      favoritePokemon,
+      avatar,
+    } = req.body;
+
+    const user = await Model.User.create({
+      username,
+      email,
+      password,
+      favoritePokemon,
+      avatar,
+    });
+
+    const userWithToken = generateToken(user.get({ raw: true }));
+    return res.json(userWithToken);
+  }
+
+  catch (error) {
+    console.error(error);
+    const message = 'An error occurred';
+    return res.status(500).json({ message });
+  }
 };
 
 module.exports = {

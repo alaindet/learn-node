@@ -10,26 +10,18 @@ const createTodo = async (req, res) => {
     is_done: body.is_done ? 1 : 0,
   };
 
-  const db = await getConnection();
-  let sql = `SELECT * FROM todos WHERE title = :title`;
-  let values = { title: dto.title };
-  let query = { namedPlaceholders: true, sql };
-  let result = await db.query(query, values);
+  const existingTodo = await todosRepository.getTodoByTitle(dto.title);
 
-  if (result.length) {
+  if (existingTodo) {
     res.status(400).send({
       error: true,
       message: `Todo with title "${dto.title} already exists"`,
     });
-    db.end();
     return;
   }
 
-  sql = `INSERT INTO todos (title, is_done) VALUES (:title, :is_done)`;
-  query = { namedPlaceholders: true, sql };
-  result = await db.query(query, values);
-  const todo = { ...dto, id: result.insertId };
-  db.end();
+  const todo = await todosRepository.createTodo(dto);
+
   res.status(201).send(todo);
 };
 

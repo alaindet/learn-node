@@ -2,6 +2,13 @@
 - Add TypeScript
 - Create service
 - Create modules
-- Create repositories
-- Create entities
-- Create DTOs
+- X - Create repositories
+- X - Create entities
+- X - Create DTOs
+- NGINX
+- Let's Encrypt
+- ESLint
+- Decorators for controllers?
+- Absolute imports
+- Barrel files
+- Data transformation

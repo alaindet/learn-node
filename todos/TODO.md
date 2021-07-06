@@ -5,3 +5,4 @@
 - Create repositories
 - Create entities
 - Create DTOs
+- Better connection management

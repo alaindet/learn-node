@@ -1,23 +1,17 @@
-const { getConnection } = require('../../../core/database');
 const todosRepository = require('../repositories/todos.repository');
 
 const createTodo = async (req, res) => {
 
-  const body = req.body;
-
   const dto = {
-    title: body.title,
-    is_done: body.is_done ? 1 : 0,
+    title: req.body.title,
+    is_done: req.body.is_done ? 1 : 0,
   };
 
   const existingTodo = await todosRepository.getTodoByTitle(dto.title);
 
   if (existingTodo) {
-    res.status(400).send({
-      error: true,
-      message: `Todo with title "${dto.title} already exists"`,
-    });
-    return;
+    const message = `Todo with title "${dto.title} already exists"`;
+    return res.status(400).send({ message });
   }
 
   const todo = await todosRepository.createTodo(dto);
@@ -26,10 +20,7 @@ const createTodo = async (req, res) => {
 };
 
 const readTodos = async (req, res) => {
-  const db = await getConnection();
-  const query = `SELECT * FROM todos`;
-  const todos = await db.query(query);
-  db.end();
+  const todos = await todosRepository.getTodos();
   res.send(todos);
 };
 
@@ -38,7 +29,7 @@ const readTodo = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const todo = todosRepository.getTodo();
+    const todo = await todosRepository.getTodo(id);
     res.send(todo);
   } catch (err) {
     const message = `Todo with id #${id} was not found`;
@@ -47,65 +38,34 @@ const readTodo = async (req, res) => {
 };
 
 const replaceTodo = async (req, res) => {
+
   const id = req.params.id;
-  const body = req.body;
 
   const dto = {
-    title: body.title,
-    is_done: body.is_done ? 1 : 0,
+    title: req.body.title,
+    is_done: req.body.is_done ? 1 : 0,
   };
 
-  const db = await getConnection();
-  let sql = `SELECT * FROM todos WHERE id = :id`;
-  let query = { namedPlaceholders: true, sql };
-  let values = { id };
-  let result = await db.query(query, values);
-
-  if (!result.length) {
-    res.status(404).send({
-      error: true,
-      message: `Todo with id #${id} was not found`,
-    });
-    db.end();
-    return;
+  try {
+    const todo = await todosRepository.updateTodo(id, dto);
+    res.send(todo);
+  } catch (err) {
+    const message = `Todo with id #${id} was not found`;
+    res.status(404).send({ message });
   }
-
-  sql = `UPDATE todos SET title = :title, is_done = :is_done`;
-  query = { namedPlaceholders: true, sql };
-  values = { id };
-  await db.query(query, values);
-  const todo = { id, ...dto };
-  db.end();
-
-  res.send(todo);
 };
 
 const deleteTodo = async (req, res) => {
+
   const id = req.params.id;
 
-  const db = await getConnection();
-  let sql = `SELECT * FROM todos WHERE id = :id`;
-  let query = { namedPlaceholders: true, sql };
-  let values = { id };
-  let result = await db.query(query, values);
-
-  if (!result.length) {
-    res.status(404).send({
-      error: true,
-      message: `Todo with id #${id} was not found`,
-    });
-    db.end();
-    return;
+  try {
+    const todo = await todosRepository.deleteTodo(id);
+    res.send(todo);
+  } catch (err) {
+    const message = `Todo with id #${id} was not found`;
+    res.status(404).send({ message });
   }
-
-  const todo = result[0];
-  sql = `DELETE FROM todos WHERE id = :id`;
-  query = { namedPlaceholders: true, sql };
-  values = { id };
-  await db.query(query, values);
-  db.end();
-
-  res.send(todo);
 };
 
 module.exports = {

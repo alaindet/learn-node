@@ -10,14 +10,14 @@ services:
     ports:
       - "3306:3306"
 
-  webserver:
-    image: nginx:alpine
-    working_dir: /application
-    volumes:
-      - .:/application
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "80:80"
+  # webserver:
+  #   image: nginx:alpine
+  #   working_dir: /application
+  #   volumes:
+  #     - .:/application
+  #     - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+  #   ports:
+  #     - "80:80"
 
   adminer:
     image: adminer

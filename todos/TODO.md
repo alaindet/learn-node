@@ -1,0 +1,7 @@
+- Use environment
+- Add TypeScript
+- Create service
+- Create modules
+- Create repositories
+- Create entities
+- Create DTOs

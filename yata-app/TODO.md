@@ -11,7 +11,7 @@
 - [ ] Let's Encrypt
 - [ ] ESLint
 - [ ] Decorators for controllers?
-- [ ] Absolute imports
+- [x] Absolute imports
 - [x] Barrel files
 - [ ] Data transformation
 - [ ] OpenAPI standard

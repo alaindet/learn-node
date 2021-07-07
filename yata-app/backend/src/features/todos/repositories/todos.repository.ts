@@ -1,4 +1,4 @@
-import { getConnection } from '../../../core/database';
+import { getConnection } from '@app/core/database';
 import { NotFoundError } from '../errors';
 import { Todo } from '../entities';
 import { CreateTodoDto, UpdateTodoDto } from '../dtos';

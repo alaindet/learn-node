@@ -1,12 +1,12 @@
 import express, { json } from 'express';
 
-import { routes } from './features/todos';
+import todosRoutes from './features/todos/routes';
 
 const APP_PORT = process.env.APP_PORT ?? 8080;
 const app = express();
 app.use(json());
 
-app.use(routes);
+app.use('/todos', todosRoutes);
 
 app.listen(APP_PORT, () => {
   console.log(`Yata App started on port ${APP_PORT}`);

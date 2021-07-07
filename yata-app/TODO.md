@@ -12,3 +12,7 @@
 - Absolute imports
 - Barrel files
 - Data transformation
+- Swagger
+- Jest
+- Supertest
+- JWT Authentication

@@ -1,11 +1,10 @@
 import { Request, RequestHandler, Response } from 'express';
 
-import { TodosRepository } from '../repositories/todos.repository';
-import { CreateTodoDto } from '../dtos/create-todo.dto';
-import { UpdateTodoDto } from '../dtos/update-todo.dto';
+import { TodosRepository } from '../repositories';
+import { CreateTodoDto, UpdateTodoDto } from '../dtos';
 
 export class TodosController {
-  
+
   todosRepository: TodosRepository;
 
   // TODO: Use DI?
@@ -17,7 +16,6 @@ export class TodosController {
 
     const dto = new CreateTodoDto();
     dto.title = request.body.title;
-    dto.is_done = request.body?.is_done ? 1 : 0;
 
     const existingTodo = await this.todosRepository.getTodoByTitle(dto.title);
 
@@ -50,7 +48,7 @@ export class TodosController {
   }
 
   async updateTodo(request: Request, response: Response) {
-    
+
     const id = request.params.id;
 
     // Validation draft: populate DTO only with existing input

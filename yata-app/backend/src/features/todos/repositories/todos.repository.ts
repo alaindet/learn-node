@@ -1,8 +1,7 @@
-import { getConnection } from '../../../core/database/get-connection';
-import { NotFoundError } from '../errors/not-found.error';
-import { Todo } from '../entities/todo.entity';
-import { CreateTodoDto } from '../dtos/create-todo.dto';
-import { UpdateTodoDto } from '../dtos/update-todo.dto';
+import { getConnection } from '../../../core/database';
+import { NotFoundError } from '../errors';
+import { Todo } from '../entities';
+import { CreateTodoDto, UpdateTodoDto } from '../dtos';
 
 export class TodosRepository {
 
@@ -23,7 +22,7 @@ export class TodosRepository {
     const todo: Todo = {
       id,
       title: dto.title,
-      is_done: dto.is_done ?? 0,
+      is_done: 0,
     };
     db.end();
 
@@ -69,7 +68,7 @@ export class TodosRepository {
   }
 
   async updateTodo(id: string | number, dto: UpdateTodoDto): Promise<Todo> {
-  
+
     const setClause = Object.keys(dto)
       .map(prop => `${prop} = :${prop}`)
       .join(', ');

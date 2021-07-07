@@ -1,6 +1,6 @@
 import express, { json } from 'express';
 
-import { routes } from './features/todos/routes';
+import { routes } from './features/todos';
 
 const APP_PORT = process.env.APP_PORT ?? 8080;
 const app = express();

@@ -18,3 +18,5 @@
 - [ ] Jest
 - [ ] Supertest
 - [ ] JWT Authentication
+- [ ] Prisma ORM?
+- [ ] Mailhog and fake email sending

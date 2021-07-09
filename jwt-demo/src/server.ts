@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 // import cors from 'cors';
 // import cookieParser from 'cookie-parser';
 
-// import { errorHandler } from './core/middleware/error-handler';
+import { errorHandler } from './core/middleware/error-handler';
 // import usersRoutes from './features/users/routes';
 
 // const CORS_OPTIONS = {
@@ -20,7 +20,7 @@ const app = express();
 // app.use('/users', usersRoutes);
 
 // // Error handling
-// app.use(errorHandler);
+app.use(errorHandler);
 
 function MyMethodDecorator(config: any) {
   return function (
@@ -32,7 +32,14 @@ function MyMethodDecorator(config: any) {
     return {
       ...descriptor,
       value: (req: Request, res: Response) => {
-        console.log('MyMethodDecorator at runtime');
+
+        console.log('MyMethodDecorator at runtime', req.query.foo);
+
+        if (!Number(req.query.foo)) {
+          res.status(400).send('Missing foo');
+          return;
+        }
+
         descriptor.value(req, res);
       },
     };

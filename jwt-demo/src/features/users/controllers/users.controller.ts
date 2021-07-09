@@ -6,9 +6,9 @@ export class UsersController {
     // ...
   }
 
-  async register(request: Request, response: Response) {
+  async create(request: Request, response: Response) {
     response.send({
-      message: 'Registering...',
+      message: 'Creating a new user...',
     });
   }
 }

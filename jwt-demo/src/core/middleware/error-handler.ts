@@ -1,11 +1,12 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
+// https://expressjs.com/en/guide/error-handling.html
 export function errorHandler(
   error: any, // TODO: Typing
   request: Request,
   response: Response,
   next: any, // TODO: Typing
 ) {
-  // TODO: Return 500
   console.error(error);
+  return response.status(500).send({ message: error.message});
 }

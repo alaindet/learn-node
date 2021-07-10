@@ -1,0 +1,3 @@
+- [ ] Add "validated" key to Request using this => ahttps://dev.to/dakdevs/extend-express-request-in-typescript-1693
+- [ ] Use middleware validation
+- [ ] Use decorator validation

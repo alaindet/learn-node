@@ -1,30 +1,19 @@
-import { Validator, ValidationErrors, NoErrors } from '../types';
+import { Validator, ValidationErrors, NoErrors, ValidationInputType } from '../types';
 import { error, NO_ERRORS } from '../helpers';
 
 const name = 'type';
 
 const err = (message: string) => error(name, message);
-
-export type AvailableType = (
-  | 'undefined'
-  | 'null'
-  | 'boolean'
-  | 'number'
-  | 'string'
-  | 'function'
-  | 'object'
-);
-
 /**
  * Based on
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
  */
 export const typeValidator: Validator<string | number> = (
   input: any,
-  typeArg: AvailableType | AvailableType[],
+  typeArg: ValidationInputType | ValidationInputType[],
 ): ValidationErrors | NoErrors => {
   
-  const typeArgs: AvailableType[] = Array.isArray(typeArg) ? typeArg : [typeArg];
+  const typeArgs: ValidationInputType[] = Array.isArray(typeArg) ? typeArg : [typeArg];
   const inputType = typeof input;
   const isValid = typeArgs.filter(t => inputType === t).length > 0;
 

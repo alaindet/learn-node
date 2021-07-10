@@ -15,11 +15,22 @@ export const equalsValidator: Validator<any> = (
   }
 
   if (input !== equalToThis) {
-    return err(
-      ['string', 'number'].includes(typeof equalToThis)
-        ? `Input is not equal to "${equalToThis}"`
-        : 'Input is not equal validation argument'
-    );
+
+    let message: string;
+
+    switch (typeof equalToThis) {
+      case 'number':
+        message = `Input is not equal to ${equalToThis}`;
+        break;
+      case 'string':
+        message = `Input is not equal to "${equalToThis}"`;
+        break;
+      default:
+        message = 'Input is not equal validation argument';
+        break;
+    }
+
+    return err(message);
   }
 
   return NO_ERRORS;

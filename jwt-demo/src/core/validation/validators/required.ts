@@ -7,9 +7,10 @@ const err = (message: string) => error(name, message);
 
 export const requiredValidator: Validator<any> = (
   input: any,
+  required: boolean = true,
 ): ValidationErrors | NoErrors => {
 
-  if (input === undefined) {
+  if (input === undefined && required) {
     return err('Missing input and/or validation arguments');
   }
 

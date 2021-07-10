@@ -1,7 +1,7 @@
 import { ValidationRule } from './rule';
 
-export interface ValidationSchema {
+export type ValidationSchema = Partial<{
   [key: string]: {
-    [rule in ValidationRule]: any;
+    [rule in ValidationRule]?: any;
   };
-}
+}>;

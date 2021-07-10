@@ -35,12 +35,12 @@ export const betweenValidator: Validator<string | number> = (
 
   if (input < from) {
     const limit = typeof from === 'string' ? `"${from}"` : from;
-    return err(`Input must be greater than ${limit}`);
+    return err(`Input must be greater than or equal to ${limit}`);
   }
 
   if (input > to) {
     const limit = typeof from === 'string' ? `"${to}"` : to;
-    return err(`Input must be lower than ${limit}`);
+    return err(`Input must be lower than or equal to ${limit}`);
   }
 
   if (input < from || input > to) {

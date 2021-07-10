@@ -33,11 +33,11 @@ export function ValidateQueryString(
             return;
           }
           
-          else {
-            // TODO
-            // https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript
-            request['validation'] = errors;
-          }
+          // else {
+          //   // TODO
+          //   // https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript
+          //   request['validation'] = errors;
+          // }
 
         }
 

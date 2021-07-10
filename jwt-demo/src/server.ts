@@ -3,6 +3,7 @@ import express, { Request, Response, NextFunction } from 'express';
 // import cookieParser from 'cookie-parser';
 
 import { errorHandler } from './core/middleware/error-handler';
+import { ValidationRule, ClassValidator, ValidationInputType } from './core/validation';
 // import usersRoutes from './features/users/routes';
 
 // const CORS_OPTIONS = {
@@ -22,34 +23,65 @@ const app = express();
 // // Error handling
 app.use(errorHandler);
 
-function MyMethodDecorator(config: any) {
-  return function (
-    target: any,
-    key: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
-    console.log('MyMethodDecorator at startup', config, target, key, descriptor);
-    return {
-      ...descriptor,
-      value: (req: Request, res: Response) => {
+// function MyMethodDecorator(config: any) {
+//   return function (
+//     target: any,
+//     key: string | symbol,
+//     descriptor: PropertyDescriptor
+//   ) {
+//     console.log('MyMethodDecorator at startup', config, target, key, descriptor);
+//     return {
+//       ...descriptor,
+//       value: (req: Request, res: Response) => {
 
-        console.log('MyMethodDecorator at runtime', req.query.foo);
+//         console.log('MyMethodDecorator at runtime', req.query.foo);
 
-        if (!Number(req.query.foo)) {
-          res.status(400).send('Missing foo');
-          return;
-        }
+//         if (!Number(req.query.foo)) {
+//           res.status(400).send('Missing foo');
+//           return;
+//         }
 
-        descriptor.value(req, res);
-      },
-    };
-  }
-}
+//         descriptor.value(req, res);
+//       },
+//     };
+//   }
+// }
 
 class MyController {
-  @MyMethodDecorator({ foo: 11, bar: 22 })
+  // @MyMethodDecorator({ foo: 11, bar: 22 })
   myRequestHandler(req: Request, res: Response) {
-    res.send('Hello World');
+
+    // TODO: Validation via decorator
+    // TODO: Validation via middleware
+    // Manual validation
+    const validator = new ClassValidator();
+
+    validator.input = {
+      foo: 6,
+      // baz: 'hey',
+    };
+
+    validator.schema = {
+      foo: {
+        [ValidationRule.Required]: true,
+        [ValidationRule.Equals]: 42,
+      },
+      baz: {
+        [ValidationRule.Required]: false,
+        [ValidationRule.Type]: ValidationInputType.Boolean,
+      },
+    };
+
+    validator.validate();
+
+    if (!validator.isValid) {
+      return res.status(400).send({
+        message: 'Validation failed',
+        errors: validator.errors,
+      });
+    }
+
+    res.send('Validation passed');
   }
 }
 

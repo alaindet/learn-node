@@ -1,5 +1,5 @@
+import { ValidationSchema, ClassValidationErrors, NoErrors, ValidationRule } from '../types';
 import { NO_ERRORS } from '../helpers';
-import { ValidationSchema, ClassValidationErrors, NoErrors, Validator, ValidationRule } from '../types';
 import { VALIDATORS } from '../validators';
 
 export class ClassValidator {
@@ -7,6 +7,7 @@ export class ClassValidator {
   private _input: any;
   private _schema: ValidationSchema;
   private _isValid = false;
+  private _errors: ClassValidationErrors | NoErrors = NO_ERRORS;
 
   set input(input: any) {
     this._input = input;
@@ -18,6 +19,20 @@ export class ClassValidator {
 
   get isValid(): boolean {
     return this._isValid;
+  }
+
+  get errors(): ClassValidationErrors | NoErrors {
+    return this._errors;
+  }
+
+  constructor(input?: any, schema?: ValidationSchema) {
+    if (input) {
+      this._input = input;
+    }
+
+    if (schema) {
+      this._schema = schema;
+    }
   }
 
   validate(): ClassValidationErrors | NoErrors {
@@ -32,11 +47,26 @@ export class ClassValidator {
         const rule = _rule as ValidationRule;
         const ruleValue = rules[rule];
         const validator = VALIDATORS[rule];
-        const validatorErrors = validator(inputValue, ruleValue);
-        errors = { ...errors, validatorErrors };
+        const validatorErrors = Array.isArray(ruleValue)
+          ? validator(inputValue, ...ruleValue)
+          : validator(inputValue, ruleValue);
+        
+        if (validatorErrors !== null) {
+          errors[key] = validatorErrors;
+        }
       }
     }
 
-    return Object.keys(errors).length ? errors : NO_ERRORS;
+    if (Object.keys(errors).length) {
+      this._errors = errors;
+      this._isValid = false;
+    }
+    
+    else {
+      this._errors = NO_ERRORS;
+      this._isValid = true;
+    }
+
+    return this._errors;
   }
 }

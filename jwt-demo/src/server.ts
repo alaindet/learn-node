@@ -1,9 +1,9 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 // import cors from 'cors';
 // import cookieParser from 'cookie-parser';
 
 import { errorHandler } from './core/middleware/error-handler';
-import { ValidationRule, ClassValidator, ValidationInputType } from './core/validation';
+import { Validate, ValidationRule, ClassValidator, ValidationInputType, ValidateQueryString } from './core/validation';
 // import usersRoutes from './features/users/routes';
 
 // const CORS_OPTIONS = {
@@ -47,9 +47,49 @@ app.use(errorHandler);
 //   }
 // }
 
+export enum HttpMethod {
+  Get = 'get',
+  Post = 'post',
+  Put = 'put',
+  Patch = 'patch',
+  Delete = 'delete',
+}
+
+export interface Route {
+  path: string;
+  method: HttpMethod;
+  handler: RequestHandler;
+  middleware?: RequestHandler[];
+}
+
+class RoutesStore {
+
+  routes: Route[] = [];
+
+  add(arg: Route | Route[]) {
+    const routes = Array.isArray(arg) ? arg : [arg];
+    this.routes.push(...routes);
+  }
+}
+
 class MyController {
-  // @MyMethodDecorator({ foo: 11, bar: 22 })
-  myRequestHandler(req: Request, res: Response) {
+
+  constructor(routes: RoutesStore) {
+    routes.add([
+      {
+        path: '/',
+        method: HttpMethod.Get,
+        handler: this.home.bind(this),
+      },
+      {
+        path: '/deco',
+        method: HttpMethod.Get,
+        handler: this.deco.bind(this),
+      },
+    ]);
+  }
+
+  home(req: Request, res: Response) {
 
     // TODO: Validation via decorator
     // TODO: Validation via middleware
@@ -83,14 +123,34 @@ class MyController {
 
     res.send('Validation passed');
   }
+
+  @Validate.QueryString({
+    foo: {
+      [ValidationRule.Required]: true,
+      [ValidationRule.Equals]: '42',
+    },
+    baz: {
+      [ValidationRule.Required]: false,
+      [ValidationRule.In]: ['11', '22', '33'],
+    },
+  })
+  deco(req: Request, res: Response) {
+    res.send('Validation passed');
+  }
 }
 
-const myController = new MyController();
+const routes = new RoutesStore();
+new MyController(routes);
+const router = Router();
 
-app.get('/', myController.myRequestHandler.bind(myController));
+for (const route of routes.routes) {
+  route.middleware
+    ? router[route.method](route.path, ...route.middleware, route.handler)
+    : router[route.method](route.path, route.handler);
+}
+
+app.use(router);
 
 // Bootstrap
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`App started on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`App started on port ${PORT}`));

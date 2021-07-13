@@ -6,16 +6,7 @@ import { errorHandler } from '@core/middleware';
 import { HttpMethod } from '@core/routing';
 import RouteStore from '@core/routing/services/route-store';
 
-// import { HttpMethod, RoutesStore } from './core/routing';
-// import {
-//   Validate,
-//   ValidationRule,
-//   ClassValidator,
-//   ValidationInputType } from './core/validation';
-
 const app = express();
-
-// Error handling
 app.use(errorHandler);
 
 // Register all controllers

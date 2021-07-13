@@ -1,15 +1,10 @@
 import { HttpMethod } from '../types';
-import RouteStore from '../services/route-store';
+import { RegisterRoute } from './register-route';
 
-export function Route(method: HttpMethod, path: string) {
-  return function (
-    target: any,
-    name: string | symbol,
-    descriptor: PropertyDescriptor,
-  ) {
-    const handler = descriptor.value;
-    const route = { method, path, handler };
-    RouteStore.add(route);
-    return descriptor;
-  }
-}
+export const Route = {
+  Get: (path: string) => RegisterRoute(HttpMethod.Get, path),
+  Post: (path: string) => RegisterRoute(HttpMethod.Post, path),
+  Put: (path: string) => RegisterRoute(HttpMethod.Put, path),
+  Patch: (path: string) => RegisterRoute(HttpMethod.Patch, path),
+  Delete: (path: string) => RegisterRoute(HttpMethod.Delete, path),
+};

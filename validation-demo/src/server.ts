@@ -37,6 +37,7 @@ const PORT = 3000;
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));
 
 // THIS works
+// Try https://www.reddit.com/r/typescript/comments/5l9veu/how_to_add_methods_created_by_a_decorator_to_the/
 /*
 interface Route {
   path: string;

@@ -1,2 +1,2 @@
 export * from './http-method';
-export * from './route';
+export * from './route-config';

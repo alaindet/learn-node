@@ -2,9 +2,8 @@ import { RequestHandler } from 'express';
 
 import { HttpMethod } from './http-method';
 
-export interface Route {
-  path: string;
+export interface RouteDescriptor {
   method: HttpMethod;
+  path: string;
   handler: RequestHandler;
-  middleware?: RequestHandler[];
 }

@@ -1,6 +1,11 @@
 import express from 'express';
 
-import { errorHandler } from './core/middleware';
+import { FooController } from './foo.controller';
+
+import { errorHandler } from '@core/middleware';
+import { HttpMethod } from '@core/routing';
+import RouteStore from '@core/routing/services/route-store';
+
 // import { HttpMethod, RoutesStore } from './core/routing';
 // import {
 //   Validate,
@@ -13,64 +18,22 @@ const app = express();
 // Error handling
 app.use(errorHandler);
 
-// const controllers = [
-//   MyController,
-// ];
+// Register all controllers
+const controllers = [
+  FooController,
+];
 
-// const routesStore = new RoutesStore();
-// const router = Router();
+// Instantiate all controllers
+for (const controllerClass of controllers) {
+  const controller = new controllerClass();
+}
 
-// for (const controller of controllers) {
-//   new controller(routesStore);
-// }
-
-// for (const route of routesStore.routes) {
-//   route.middleware
-//     ? router[route.method](route.path, ...route.middleware, route.handler)
-//     : router[route.method](route.path, route.handler);
-// }
-
-// app.use(router);
+// Register all routes
+for (const route of RouteStore.getAll()) {
+  const method = route.method as HttpMethod;
+  app[method](route.path, route.handler);
+}
 
 // Bootstrap
 const PORT = 3000;
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));
-
-// THIS works
-// Try https://www.reddit.com/r/typescript/comments/5l9veu/how_to_add_methods_created_by_a_decorator_to_the/
-/*
-interface Route {
-  path: string;
-  method: 'get' | 'post' | 'put' | 'delete'; // Add the rest...
-}
-
-class BaseController {
-  prefix: string;
-  routes: Route[] = [];
-}
-
-function Controller(prefix = '/') {
-  console.log('Controller startup');
-  return function <T extends { new(...args: any[]): {} }>(constructor: T) {
-    console.log('Controller runtime');
-    constructor.prototype.prefix = prefix;
-  }
-}
-
-@Controller('/foo')
-class FooController extends BaseController {
-
-  // @Route('POST', '/create')
-  create(): void {
-    console.log('FooController.create');
-  }
-
-  // @Route('GET', '/read')
-  read(): void {
-    console.log('FooController.read');
-  }
-}
-
-const foo = new FooController();
-console.log(foo.prefix);
-*/

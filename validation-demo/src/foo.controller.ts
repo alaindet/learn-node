@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { Route, HttpMethod } from './core/routing';
+import { Route } from './core/routing';
 
 export class FooController {
 

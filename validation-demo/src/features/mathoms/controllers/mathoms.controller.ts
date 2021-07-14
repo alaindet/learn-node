@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { Controller } from '@app/core/http';
 import { HttpMethod } from '@app/core/routing';
+import { MathomsService } from '../services';
 
 export class MathomsController extends Controller {
 
@@ -15,7 +16,12 @@ export class MathomsController extends Controller {
     { method: HttpMethod.Delete, path: '/:id', handler: this.delete },
   ];
 
-  private data: { id: number, [key: string]: any }[] = [];
+  private service: MathomsService;
+
+  constructor() {
+    super();
+    this.service = new MathomsService();
+  }
 
   create(request: Request, response: Response) {
     const id = this.createNewMathom(request.body);

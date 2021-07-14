@@ -1,20 +1,34 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
+export interface FilesystemCollection<T = any> {
+  name: string;
+  path: string;
+  data: T[];
+}
+
 export class FilesystemStorageService {
 
-  path: string;
+  collections: { [collectionName: string]: FilesystemCollection };
 
-  setPath(path: string): void {
-    this.path = join(__dirname, '..', '..', path);
+  createCollection<T = any>(name: string, _path: string): void {
+    const path = join(__dirname, '..', '..', _path);
+    const data: T[] = [];
+    const collection = { name, path, data };
+    this.collections[name] = collection;
   }
 
-  async store(data: any[]): Promise<void> {
-    await fs.writeFile(this.path, JSON.stringify(data));
+  async storeCollection<T = any>(
+    name: string,
+    data: T[],
+  ): Promise<void> {
+    const { path } = this.collections[name];
+    await fs.writeFile(path, JSON.stringify(data));
   }
 
-  async get(): Promise<any[]> {
-    const rawData = await fs.readFile(this.path, { encoding: 'utf8' });
-    return JSON.parse(rawData);
+  async getCollection<T = any>(name: string): Promise<T[]> {
+    const { path } = this.collections[name];
+    const data = await fs.readFile(path, { encoding: 'utf8' });
+    return JSON.parse(data);
   }
 }

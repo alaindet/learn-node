@@ -1,2 +1,5 @@
 - [ ] Add "validated" key to Request using this => https://dev.to/dakdevs/extend-express-request-in-typescript-1693
 - [ ] Add mathoms service
+- [ ] Complete controller, repository and service refactor
+- [ ] Add global error handler for HTTP 500 responses
+- [ ] 

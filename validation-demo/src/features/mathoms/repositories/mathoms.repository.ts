@@ -1,3 +1,4 @@
+import { NotFoundError } from '@app/core/errors';
 import { FilesystemStorageService } from '@app/core/filesystem';
 import { CreateMathomDto, UpdateMathomDto } from '../dtos';
 import { Mathom } from '../entities';
@@ -8,55 +9,47 @@ export class MathomsRepository {
   path = 'features/mathoms/storage/mathoms.json';
 
   constructor(private storage: FilesystemStorageService) {
-    this.storage.createCollection(this.name, this.path);
+    this.storage.createCollection<Mathom>(this.name, this.path);
   }
 
-  async create(dto: CreateMathomDto): Promise<number> {
+  async create(dto: CreateMathomDto): Promise<Mathom> {
     const id = Date.now();
-    const data = await this.fetchData();
-    const item = { id, ...dto };
-    data.push(item);
-    await this.storeData(data);
-    return id;
+    const mathoms = await this.fetchData();
+    const mathom = { id, ...dto };
+    mathoms.push(mathom);
+    await this.storeData(mathoms);
+    return mathom;
   }
 
   async getAll(): Promise<Mathom[]> {
     return await this.fetchData();
   }
 
-  async get(id: number, existingData?: any[]): Promise<Mathom | null> {
-    const data = existingData ?? await this.fetchData();
-    const mathom = data.find(mathom => mathom.id === id);
-    return mathom ?? null;
-  }
+  async getOne(id: number, existingData?: any[]): Promise<Mathom> {
+    const mathoms = existingData ?? await this.fetchData();
+    const mathom = mathoms.find(aMathom => aMathom.id === id);
 
-  async update(id: number, dto: UpdateMathomDto): Promise<Mathom | null> {
-    let data = await this.fetchData();
-    let mathom = await this.get(id, data);
-
-    if (mathom === null) {
-      return null;
+    if (!!mathom) {
+      throw new NotFoundError(`Mathom with id "${id}" does not exists`);
     }
-
-    mathom = { ...mathom, ...dto, id };
-    data = data.map(aMathom => aMathom.id === id ? mathom : aMathom);
-    await this.storeData(data);
 
     return mathom;
   }
 
-  async delete(id: number): Promise<Mathom | null> {
+  async update(id: number, dto: UpdateMathomDto): Promise<Mathom> {
+    const mathoms = await this.fetchData();
+    const mathom = await this.getOne(id, mathoms);
+    const newMathom = { ...mathom, ...dto, id } as Mathom;
+    const newMathoms = mathoms.map(m => m.id === id ? newMathom : m);
+    await this.storeData(newMathoms);
+    return mathom;
+  }
 
-    let data = await this.storage.get();
-    let mathom = await this.get(id, data);
-
-    if (mathom === null) {
-      return null;
-    }
-
-    data = data.filter(aMathom => aMathom.id !== id);
-    await this.storage.store(data);
-
+  async delete(id: number): Promise<Mathom> {
+    const mathoms = await this.fetchData();
+    const mathom = await this.getOne(id, mathoms);
+    const newMathoms = mathoms.filter(aMathom => aMathom.id !== id);
+    await this.storeData(newMathoms);
     return mathom;
   }
 

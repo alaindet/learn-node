@@ -2,7 +2,11 @@ import { Request, Response } from 'express';
 
 import { Controller } from '@app/core/http';
 import { HttpMethod } from '@app/core/routing';
+import { NotFoundError } from '@app/core/errors';
 import { MathomsService } from '../services';
+import { MathomsRepository } from '../repositories';
+import { FilesystemStorageService } from '@app/core/filesystem';
+import { CreateMathomDto, UpdateMathomDto } from '../dtos';
 
 export class MathomsController extends Controller {
 
@@ -18,36 +22,76 @@ export class MathomsController extends Controller {
 
   private service: MathomsService;
 
+  // TODO: Use DI
   constructor() {
     super();
-    this.service = new MathomsService();
+    const storage = new FilesystemStorageService();
+    const repository = new MathomsRepository(storage);
+    this.service = new MathomsService(repository);
   }
 
-  create(request: Request, response: Response) {
-    const id = this.createNewMathom(request.body);
-    const message = `Created mathom #${id}`;
-    const content = null;
+  async create(request: Request, response: Response) {
+    const dto = new CreateMathomDto();
+    dto.title = request.body.title;
+    dto.description = request.body?.description ?? null;
+    const mathom = await this.service.create(dto);
+    const message = `Created mathom #${mathom.id}`;
+    const content = mathom;
     response.send({ message, content });
   }
 
-  getAll(request: Request, response: Response) {
+  async getAll(request: Request, response: Response) {
+    const mathoms = await this.service.getAll();
     const message = 'Read all mathoms';
-    const content = this.data;
+    const content = mathoms;
     response.send({ message, content });
   }
 
-  getOne(request: Request, response: Response) {
-    const message = 'Read a mathom';
-    const id = Number(request.params.id);
-    const mathom = this.data.find(mathom => mathom.id === id);
-    const content = !!mathom ? mathom : null;
-    response.send({ message, content });
+  async getOne(request: Request, response: Response) {
+
+    const id = request.params.id;
+
+    try {
+      const mathom = await this.service.getOne(id);
+      const message = 'Read a mathom';
+      const content = mathom;
+      response.send({ message, content });
+    }
+    
+    // TODO: Refactor
+    catch (err) {
+      if (err instanceof NotFoundError) {
+        const message = `Could not find mathom with id "${id}"`;
+        return response.status(404).send({ message });
+      }
+    }
   }
 
-  update(request: Request, response: Response) {
-    const message = 'Update a mathom';
-    const content = null;
-    response.send({ message, content });
+  async update(request: Request, response: Response) {
+
+    const id = request.params.id;
+
+    try {
+      const dto = new UpdateMathomDto();
+
+      // TODO: Put these assignments in a loop?
+      if (request.body?.title) {
+        dto.title = request.body.title;
+      }
+
+      if (request.body?.description) {
+        dto.description = request.body.description;
+      }
+
+      return await this.service.update(id, dto);
+    }
+
+    catch (err) {
+      if (err instanceof NotFoundError) {
+        const message = `Could not find mathom with id "${id}"`;
+        return response.status(404).send({ message });
+      }
+    }
   }
 
   delete(request: Request, response: Response) {

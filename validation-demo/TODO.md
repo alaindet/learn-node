@@ -1,8 +1,2 @@
 - [ ] Add "validated" key to Request using this => https://dev.to/dakdevs/extend-express-request-in-typescript-1693
-- [ ] Add @RouteGroup class decorator on controllers
-- [ ] Refactor RouteStore with DI?
-- [X] Add sub-decorators for HTTP methods. Ex.:
-  ```
-  @Route.Get('/foo')
-  myHandler(...) {...}
-  ```
+- [ ] Add `exportRoutes` from base `Controller` class

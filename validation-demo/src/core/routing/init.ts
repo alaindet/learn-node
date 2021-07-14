@@ -3,9 +3,9 @@ import { Router } from 'express';
 import { controllers } from '../../routes';
 import RouteStore from '@core/routing/services/route-store';
 import { HttpMethod } from '@core/routing';
+import { Controller } from '@core/http';
 
-// This triggers any routing decorator
-const _triggerAllDecorators = controllers;
+const routeMap = new Map<string, Controller>();
 
 const router = Router();
 

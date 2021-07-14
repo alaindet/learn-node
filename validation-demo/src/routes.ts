@@ -1,4 +1,4 @@
-import { MathomsController } from '@features/mathoms';
+import { MathomsController } from '@app/features/mathoms';
 
 export const controllers = [
   MathomsController,

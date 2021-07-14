@@ -1,11 +1,12 @@
-import express from 'express';
+import express, { json } from 'express';
 
-import { errorHandler } from '@core/middleware';
-import router from '@core/routing/init';
+import { errorHandler } from '@app/core/middleware';
+import { initializeRouter } from '@app/core/routing';
 
 const app = express();
+app.use(json());
+app.use(initializeRouter());
 app.use(errorHandler);
-app.use(router);
 
 const PORT = 3000;
 app.listen(PORT, () => {

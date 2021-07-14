@@ -1,2 +1,2 @@
 - [ ] Add "validated" key to Request using this => https://dev.to/dakdevs/extend-express-request-in-typescript-1693
-- [ ] Add `exportRoutes` from base `Controller` class
+- [ ] Add mathoms service

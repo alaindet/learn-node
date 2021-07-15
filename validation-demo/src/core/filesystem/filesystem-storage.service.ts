@@ -27,8 +27,21 @@ export class FilesystemStorageService {
   }
 
   async getCollection<T = any>(name: string): Promise<T[]> {
-    const { path } = this.collections[name];
-    const data = await fs.readFile(path, { encoding: 'utf8' });
-    return JSON.parse(data);
+
+    let collection;
+
+    try {
+      const { path } = this.collections[name];
+      const data = await fs.readFile(path, { encoding: 'utf8' });
+      collection = JSON.parse(data);
+    }
+
+    catch (err) {
+      collection = [];
+    }
+
+    finally {
+      return collection;
+    }
   }
 }

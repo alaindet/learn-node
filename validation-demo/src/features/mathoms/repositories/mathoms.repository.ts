@@ -1,4 +1,4 @@
-import { NotFoundError } from '@app/core/errors';
+import { NotFoundError, UniqueConstraintError } from '@app/core/errors';
 import { FilesystemStorageService } from '@app/core/filesystem';
 import { CreateMathomDto, UpdateMathomDto } from '../dtos';
 import { Mathom } from '../entities';
@@ -16,9 +16,24 @@ export class MathomsRepository {
     const id = Date.now();
     const mathoms = await this.fetchData();
     const mathom = { id, ...dto };
+
+    const existingMathom = await this.getOneByTitle(dto.title);
+
+    if (existingMathom) {
+      const message = `Mathom with title "${dto.title}" already exists`;
+      throw new UniqueConstraintError(message);
+    }
+
     mathoms.push(mathom);
     await this.storeData(mathoms);
     return mathom;
+  }
+
+  private async getOneByTitle(
+    title: string,
+  ): Promise<Mathom | undefined> {
+    const mathoms = await this.fetchData();
+    return mathoms.find(aMathom => aMathom.title === title);
   }
 
   async getAll(): Promise<Mathom[]> {
@@ -30,7 +45,8 @@ export class MathomsRepository {
     const mathom = mathoms.find(aMathom => aMathom.id === id);
 
     if (!!mathom) {
-      throw new NotFoundError(`Mathom with id "${id}" does not exists`);
+      const message = `Mathom with id "${id}" does not exists`;
+      throw new NotFoundError(message);
     }
 
     return mathom;

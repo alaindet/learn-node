@@ -9,7 +9,7 @@ export class MathomsService {
   ) {}
 
   async create(dto: CreateMathomDto): Promise<Mathom> {
-    return await this.repository.create(dto); 
+    return await this.repository.create(dto);
   }
 
   async getAll(): Promise<Mathom[]> {
@@ -24,5 +24,10 @@ export class MathomsService {
   async update(_id: string, dto: UpdateMathomDto): Promise<Mathom> {
     const id = Number(_id);
     return await this.repository.update(id, dto);
+  }
+
+  async delete(_id: string): Promise<Mathom> {
+    const id = Number(_id);
+    return await this.repository.delete(id);
   }
 }

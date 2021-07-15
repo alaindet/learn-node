@@ -5,5 +5,7 @@ import { HttpMethod } from './http-method';
 export interface Route {
   method: HttpMethod;
   path: string;
-  handler: RequestHandler;
+  handler?: RequestHandler;
+  middleware?: RequestHandler[];
+  children?: Route[];
 }

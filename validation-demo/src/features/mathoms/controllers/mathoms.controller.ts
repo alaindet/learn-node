@@ -3,9 +3,9 @@ import { Request, Response } from 'express';
 import { Controller } from '@app/core/http';
 import { HttpMethod } from '@app/core/routing';
 import { NotFoundError } from '@app/core/errors';
+import { FilesystemStorageService } from '@app/core/filesystem';
 import { MathomsService } from '../services';
 import { MathomsRepository } from '../repositories';
-import { FilesystemStorageService } from '@app/core/filesystem';
 import { CreateMathomDto, UpdateMathomDto } from '../dtos';
 
 export class MathomsController extends Controller {
@@ -13,16 +13,36 @@ export class MathomsController extends Controller {
   prefix = '/mathoms';
 
   routes = [
-    { method: HttpMethod.Post, path: '/', handler: this.create },
-    { method: HttpMethod.Get, path: '/', handler: this.getAll },
-    { method: HttpMethod.Get, path: '/:id', handler: this.getOne },
-    { method: HttpMethod.Put, path: '/:id', handler: this.update },
-    { method: HttpMethod.Delete, path: '/:id', handler: this.delete },
+    {
+      method: HttpMethod.Post,
+      path: '/',
+      handler: this.create
+    },
+    {
+      method: HttpMethod.Get,
+      path: '/',
+      handler: this.getAll
+    },
+    {
+      method: HttpMethod.Get,
+      path: '/:id',
+      handler: this.getOne
+    },
+    {
+      method: HttpMethod.Put,
+      path: '/:id',
+      handler: this.update
+    },
+    {
+      method: HttpMethod.Delete,
+      path: '/:id',
+      handler: this.delete
+    },
   ];
 
   private service: MathomsService;
 
-  // TODO: Use DI
+  // TODO: Use DI!
   constructor() {
     super();
     const storage = new FilesystemStorageService();
@@ -57,7 +77,7 @@ export class MathomsController extends Controller {
       const content = mathom;
       response.send({ message, content });
     }
-    
+
     // TODO: Refactor
     catch (err) {
       if (err instanceof NotFoundError) {

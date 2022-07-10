@@ -1,0 +1,38 @@
+{
+  "name": "hoaxify",
+  "version": "1.0.0",
+  "description": "TDD example app with Express",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "jest --watch",
+    "test:once": "jest",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaindet/learn-node.git"
+  },
+  "keywords": [
+    "testing"
+  ],
+  "author": "Alain D'Ettorre <alain.det@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alaindet/learn-node/issues"
+  },
+  "homepage": "https://github.com/alaindet/learn-node#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "http-server": "^14.1.1",
+    "jest": "^28.1.2",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "supertest": "^6.2.4"
+  }
+}

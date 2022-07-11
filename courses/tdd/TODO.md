@@ -1,0 +1,1 @@
+- [ ] SQlite use in memory for testing

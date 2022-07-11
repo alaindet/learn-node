@@ -16,6 +16,7 @@
   },
   "rules": {
     "prettier/prettier": "warn",
-    "eqeqeq": 1
+    "eqeqeq": 1,
+    "trailingComma": "all"
   }
 }

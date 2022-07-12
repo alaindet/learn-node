@@ -1,10 +1,11 @@
-const app = require('./app');
 const db = require('./config/database');
+const app = require('./app');
 
 if (process.env.NODE_ENV !== 'production') {
   db.sync();
 }
 
+// TODO: Move into .env
 const APP_NAME = 'Hoaxify';
 const PORT = 3000;
 

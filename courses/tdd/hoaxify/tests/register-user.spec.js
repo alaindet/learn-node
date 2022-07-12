@@ -1,9 +1,10 @@
 const request = require('supertest');
 const { StatusCodes } = require('http-status-codes');
+const bcrypt = require('bcrypt');
 
 const app = require('../src/app');
 const db = require('../src/config/database');
-const User = require('../src/user/user');
+const { User } = require('../src/users/user.model');
 
 const getTestPayload = () => ({
   username: 'user1',
@@ -16,77 +17,46 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  // Clean users table before running each test
   return User.destroy({ truncate: true });
 });
 
 describe('User Registration', () => {
 
-  it('returns 200 when signup request is valid', (done) => {
-    request(app)
-      .post('/api/1.0/users')
-      .send(getTestPayload())
-      .then(response => {
-        expect(response.status).toBe(StatusCodes.CREATED);
-        done();
-      });
-  });
-
-  it('returns success message when signup request is valid', (done) => {
-    request(app)
-      .post('/api/1.0/users')
-      .send(getTestPayload())
-      .expect(StatusCodes.CREATED)
-      .then(response => {
-        expect(response.body.message).toBe('User created');
-        done();
-      });
-  });
-
-  it('saves the user to the database', (done) => {
-    request(app)
-      .post('/api/1.0/users')
-      .send(getTestPayload())
-      .expect(StatusCodes.CREATED)
-      .then(() => {
-        User.findAll().then(users => {
-          expect(users.length).toEqual(1);
-        });
-        done();
-      });
-  });
-
-  it('saves the username and email to the database', (done) => {
+  it('returns 201 when signup request is valid', async () => {
     const payload = getTestPayload();
-    request(app)
-      .post('/api/1.0/users')
-      .send(getTestPayload())
-      .expect(StatusCodes.CREATED)
-      .then(() => {
-        User.findAll().then((users) => {
-          const user = users[0];
-          expect(user.username).toBe(payload.username);
-          expect(user.email).toBe(payload.email);
-        });
-        done();
-      });
+    const res = await request(app).post('/api/1.0/users').send(payload);
+    expect(res.status).toBe(StatusCodes.CREATED);
   });
 
-  it('hashes the password in database', (done) => {
+  it('returns success message when signup request is valid', async () => {
     const payload = getTestPayload();
-    request(app)
-      .post('/api/1.0/users')
-      .send(getTestPayload())
-      .expect(StatusCodes.CREATED)
-      .then(() => {
-        User.findAll().then((users) => {
-          const user = users[0];
-          expect(user.username).toBe(payload.username);
-          expect(user.email).toBe(payload.email);
-          expect(user.password).not.toBe(payload.password);
-          // TODO: Check for proper encrypted password
-        });
-        done();
-      });
+    const res = await request(app).post('/api/1.0/users').send(payload);
+    expect(res.body.message).toBe('User created');
+  });
+
+  it('saves the user to the database', async () => {
+    const payload = getTestPayload();
+    await request(app).post('/api/1.0/users').send(payload);
+    const users = await User.findAll();
+    expect(users.length).toEqual(1);
+  });
+
+  it('saves the username and email to the database', async () => {
+    const payload = getTestPayload();
+    await request(app).post('/api/1.0/users').send(payload);
+    const users = await User.findAll();
+    const user = users[0];
+    expect(user.username).toBe(payload.username);
+    expect(user.email).toBe(payload.email);
+  });
+
+  it('hashes the password in database', async () => {
+    const payload = getTestPayload();
+    await request(app).post('/api/1.0/users').send(payload)
+    const users = await User.findAll();
+    const user = users[0];
+    expect(user.username).toBe(payload.username);
+    expect(user.email).toBe(payload.email);
+    expect(bcrypt.compareSync(payload.password, user.password)).toBe(true);
   });
 });

@@ -23,4 +23,4 @@ const options = {
 
 User.init(attributes, options);
 
-module.exports = User;
+module.exports = { User };

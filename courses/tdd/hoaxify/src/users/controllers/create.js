@@ -16,7 +16,6 @@ const validateEmail = check('email')
   .bail()
   .isEmail()
   .withMessage('Email must be valid');
-  // ...
 
 const validatePassword = check('password')
   .notEmpty()
@@ -25,7 +24,7 @@ const validatePassword = check('password')
   .isLength({ min: 6 })
   .withMessage('Password must have min 6 characters')
   .bail()
-  .matches(/^?=.*[a-z](?=[A-Z])(?=.*[0-9]).*?$/)
+  .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).*?$/)
   .withMessage('Password must have 1+ uppercase, 1+ lowercase and 1+ numbers')
 
 const validate = [

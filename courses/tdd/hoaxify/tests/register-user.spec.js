@@ -19,7 +19,7 @@ describe('User Registration', () => {
   const getValidPayload = () => ({
     username: 'user1',
     email: 'user1@example.com',
-    password: 'user1@example.com',
+    password: 'P4ssword',
   });
 
   const postUser = (inputPayload) => {
@@ -62,32 +62,6 @@ describe('User Registration', () => {
     expect(bcrypt.compareSync(password, user.password)).toBe(true);
   });
 
-  /*
-  This is a table test, equivalent to
-
-  it.each([
-    ['username', 'Username cannot be empty'],
-    ['email', 'Email cannot be empty'],
-    ['password', 'Password cannot be empty'],
-  ])('when %s is empty returns "%s"', async (field, expected) => {
-    const { [field]: _, ...invalidPayload } = getValidPayload();
-    const res = await postUser(invalidPayload);
-    expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-    expect(res.body.validationErrors[field]).toBe(expected);
-  });
-  */
-  it.each`
-    field         | expected
-    ${'username'} | ${'Username cannot be empty'}
-    ${'email'}    | ${'Email cannot be empty'}
-    ${'password'} | ${'Password cannot be empty'}
-  `('returns "$expected" when $field is empty', async ({ field, expected }) => {
-    const { [field]: _, ...invalidPayload } = getValidPayload();
-    const res = await postUser(invalidPayload);
-    expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-    expect(res.body.validationErrors[field]).toBe(expected);
-  });
-
   it('returns errors when username and email are invalid', async () => {
     const { username, email, ...invalidPayload } = getValidPayload();
     invalidPayload.email = null;
@@ -105,6 +79,15 @@ describe('User Registration', () => {
     expect(res.body.validationErrors).not.toBeUndefined();
   });
 
+  /*
+  Equivalent
+  it.each([
+    ['username', null, 'Username cannot be empty'],
+    ...
+  ])('when %s is %s it returns "%s"', async (field, value, expected) => {
+    ...
+  });
+  */
   it.each`
     field         | value              | expected
     ${'username'} | ${null}            | ${'Username cannot be empty'}
@@ -117,7 +100,10 @@ describe('User Registration', () => {
     ${'password'} | ${null}            | ${'Password cannot be empty'}
     ${'password'} | ${'P4ssa'}         | ${'Password must have min 6 characters'}
     ${'password'} | ${'lowercase'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
-  `('returns $expected when $field is $value', async ({ field, value, expected }) => {
+    ${'password'} | ${'UPPERCASE'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
+    ${'password'} | ${'123abc456'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
+    ${'password'} | ${'123ABC456'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
+  `('returns "$expected" when $field is "$value"', async ({ field, value, expected }) => {
     const payload = getValidPayload();
     payload[field] = value;
     const res = await postUser(payload);

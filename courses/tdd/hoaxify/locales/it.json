@@ -1,0 +1,15 @@
+{
+  "users": {
+    "created": "Utente creato"
+  },
+  "validation": {
+    "usernameEmpty": "Username obbligatorio",
+    "usernameSize": "Lo username deve contenere da 4 a 32 caratteri",
+    "emailEmpty": "Email obbligatoria",
+    "emailValid": "La email deve essere valida",
+    "emailInUse": "Email già in uso",
+    "passwordEmpty": "Password obbligatoria",
+    "passwordSize": "La password deve contenere almeno 6 caratteri",
+    "passwordPattern": "La password deve contenere 1+ maiuscole, 1+ minuscole e 1+ numeri"
+  }
+}

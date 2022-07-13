@@ -1,0 +1,15 @@
+{
+  "users": {
+    "created": "User created"
+  },
+  "validation": {
+    "usernameEmpty": "Username cannot be empty",
+    "usernameSize": "Username must have min 4 and max 32 characters",
+    "emailEmpty": "Email cannot be empty",
+    "emailValid": "Email must be valid",
+    "emailInUse": "Email already in use",
+    "passwordEmpty": "Password cannot be empty",
+    "passwordSize": "Password must have min 6 characters",
+    "passwordPattern": "Password must have 1+ uppercase, 1+ lowercase and 1+ numbers"
+  }
+}

@@ -1,27 +1,18 @@
 const { StatusCodes } = require('http-status-codes');
 
-const emailAlreadyInUse = (res) => {
-  return res.status(StatusCodes.CONFLICT).send({
-    validationErrors: {
-      email: 'Email already in use',
-    },
-  });
-};
-
-const validation = (errors, res) => {
+const validation = (req, res, errors) => {
   const validationErrors = {};
-  errors.array().forEach(err => validationErrors[err.param] = err.msg);
-  return res.status(StatusCodes.BAD_REQUEST).send({ validationErrors });
-};
+  const translate = req.t;
 
-const generic = (res) => {
-  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-    messge: 'Something went wrong',
+  errors.array().forEach(err => {
+    validationErrors[err.param] = translate(err.msg);
+  });
+
+  return res.status(StatusCodes.BAD_REQUEST).send({
+    validationErrors,
   });
 };
 
 module.exports = {
-  emailAlreadyInUse,
   validation,
-  generic,
 };

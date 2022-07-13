@@ -1,10 +1,9 @@
-const request = require('supertest');
 const { StatusCodes } = require('http-status-codes');
 const bcrypt = require('bcrypt');
 
-const app = require('../src/app');
 const db = require('../src/config/database');
 const { User } = require('../src/users/user.model');
+const fromUtils = require('./register-user.utils');
 
 beforeAll(() => {
   return db.sync();
@@ -16,45 +15,34 @@ beforeEach(() => {
 
 describe('User Registration', () => {
 
-  const getValidPayload = () => ({
-    username: 'user1',
-    email: 'user1@example.com',
-    password: 'P4ssword',
-  });
-
-  const postUser = (inputPayload) => {
-    payload = inputPayload ?? getValidPayload();
-    return request(app).post('/api/1.0/users').send(payload);
-  };
-
   it(`returns ${StatusCodes.CREATED} when signup request is valid`, async () => {
-    const res = await postUser();
+    const res = await fromUtils.postUser();
     expect(res.status).toBe(StatusCodes.CREATED);
   });
 
   it('returns success message when signup request is valid', async () => {
-    const res = await postUser();
-    expect(res.body.message).toBe('User created');
+    const res = await fromUtils.postUser();
+    expect(res.body.message).toBe('users.created');
   });
 
   it('saves the user to the database', async () => {
-    await postUser();
+    await fromUtils.postUser();
     const users = await User.findAll();
     expect(users.length).toEqual(1);
   });
 
   it('saves the username and email to the database', async () => {
-    await postUser();
+    await fromUtils.postUser();
     const users = await User.findAll();
-    const { username, email } = getValidPayload();
+    const { username, email } = fromUtils.getValidPayload();
     const user = users[0];
     expect(user.username).toBe(username);
     expect(user.email).toBe(email);
   });
 
   it('hashes the password in database', async () => {
-    await postUser();
-    const { username, email, password } = getValidPayload();
+    await fromUtils.postUser();
+    const { username, email, password } = fromUtils.getValidPayload();
     const users = await User.findAll();
     const user = users[0];
     expect(user.username).toBe(username);
@@ -63,9 +51,9 @@ describe('User Registration', () => {
   });
 
   it('returns errors when username and email are invalid', async () => {
-    const { username, email, ...invalidPayload } = getValidPayload();
+    const { username, email, ...invalidPayload } = fromUtils.getValidPayload();
     invalidPayload.email = null;
-    const res = await postUser(invalidPayload);
+    const res = await fromUtils.postUser(invalidPayload);
     const errors = Object.keys(res.body.validationErrors ?? {});
     errors.sort();
     const expected = ['username', 'email'];
@@ -74,10 +62,19 @@ describe('User Registration', () => {
   });
 
   it('returns validation errors in body when request is invalid', async () => {
-    const { username, ...invalidPayload } = getValidPayload();
-    const res = await postUser(invalidPayload);
+    const { username, ...invalidPayload } = fromUtils.getValidPayload();
+    const res = await fromUtils.postUser(invalidPayload);
     expect(res.body.validationErrors).not.toBeUndefined();
   });
+
+  const usernameEmpty = 'Username cannot be empty';
+  const usernameSize = 'Username must have min 4 and max 32 characters';
+  const emailEmpty = 'Email cannot be empty';
+  const emailValid = 'Email must be valid';
+  const emailInUse = 'Email already in use';
+  const passwordEmpty = 'Password cannot be empty';
+  const passwordSize = 'Password must have min 6 characters';
+  const passwordPattern = 'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers';
 
   /*
   Equivalent
@@ -91,43 +88,88 @@ describe('User Registration', () => {
   */
   it.each`
     field         | value              | expected
-    ${'username'} | ${null}            | ${'Username cannot be empty'}
-    ${'username'} | ${'aa'}            | ${'Username must have min 4 and max 32 characters'}
-    ${'username'} | ${'a'.repeat(35)}  | ${'Username must have min 4 and max 32 characters'}
-    ${'email'}    | ${null}            | ${'Email cannot be empty'}
-    ${'email'}    | ${'mail.com'}      | ${'Email must be valid'}
-    ${'email'}    | ${'user.mail.com'} | ${'Email must be valid'}
-    ${'email'}    | ${'me@there'}      | ${'Email must be valid'}
-    ${'password'} | ${null}            | ${'Password cannot be empty'}
-    ${'password'} | ${'P4ssa'}         | ${'Password must have min 6 characters'}
-    ${'password'} | ${'lowercase'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
-    ${'password'} | ${'UPPERCASE'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
-    ${'password'} | ${'123abc456'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
-    ${'password'} | ${'123ABC456'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
+    ${'username'} | ${null}            | ${usernameEmpty}
+    ${'username'} | ${'aa'}            | ${usernameSize}
+    ${'username'} | ${'a'.repeat(35)}  | ${usernameSize}
+    ${'email'}    | ${null}            | ${emailEmpty}
+    ${'email'}    | ${'mail.com'}      | ${emailValid}
+    ${'email'}    | ${'user.mail.com'} | ${emailValid}
+    ${'email'}    | ${'me@there'}      | ${emailValid}
+    ${'password'} | ${null}            | ${passwordEmpty}
+    ${'password'} | ${'P4ssa'}         | ${passwordSize}
+    ${'password'} | ${'lowercase'}     | ${passwordPattern}
+    ${'password'} | ${'UPPERCASE'}     | ${passwordPattern}
+    ${'password'} | ${'123abc456'}     | ${passwordPattern}
+    ${'password'} | ${'123ABC456'}     | ${passwordPattern}
   `('returns "$expected" when $field is "$value"', async ({ field, value, expected }) => {
-    const payload = getValidPayload();
+    const payload = fromUtils.getValidPayload();
     payload[field] = value;
-    const res = await postUser(payload);
+    const res = await fromUtils.postUser(payload);
     expect(res.body.validationErrors[field]).toBe(expected);
   });
 
-  it('returns "Email already in use" when same email exists', async () => {
-    const payload = getValidPayload();
+  it(`returns "${emailInUse}" when same email exists`, async () => {
+    const payload = fromUtils.getValidPayload();
     await User.create(payload);
-    const res = await postUser(); // Try creating the same user again
+    const res = await fromUtils.postUser(); // Try creating the same user again
     expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-    expect(res.body.validationErrors.email).toBe('Email already in use');
+    expect(res.body.validationErrors.email).toBe(emailInUse);
   });
 
   it('returns errors for both empty username and same email exists', async () => {
-    const payload = getValidPayload();
+    const payload = fromUtils.getValidPayload();
     await User.create(payload);
     const invalidPayload = { ...payload, username: null };
-    const res = await postUser(invalidPayload);
+    const res = await fromUtils.postUser(invalidPayload);
     const errs = Object.keys(res.body.validationErrors ?? {});
     const expected = ['username', 'email'];
     expect([...errs].sort()).toEqual([...expected].sort());
-    expect(res.body.validationErrors.email).toBe('Email already in use');
-    expect(res.body.validationErrors.username).toBe('Username cannot be empty');
+    expect(res.body.validationErrors.email).toBe(emailInUse);
+    expect(res.body.validationErrors.username).toBe(usernameEmpty);
+  });
+});
+
+describe('Internationalization (IT)', () => {
+
+  const usernameEmpty = 'Username obbligatorio';
+  const usernameSize = 'Lo username deve contenere da 4 a 32 caratteri';
+  const emailEmpty = 'Email obbligatoria';
+  const emailValid = 'La email deve essere valida';
+  const emailInUse = 'Email già in uso';
+  const passwordEmpty = 'Password obbligatoria';
+  const passwordSize = 'La password deve contenere almeno 6 caratteri';
+  const passwordPattern = 'La password deve contenere 1+ maiuscole, 1+ minuscole e 1+ numeri';
+
+  it.each`
+    field         | value              | expected
+    ${'username'} | ${null}            | ${usernameEmpty}
+    ${'username'} | ${'aa'}            | ${usernameSize}
+    ${'username'} | ${'a'.repeat(35)}  | ${usernameSize}
+    ${'email'}    | ${null}            | ${emailEmpty}
+    ${'email'}    | ${'mail.com'}      | ${emailValid}
+    ${'email'}    | ${'user.mail.com'} | ${emailValid}
+    ${'email'}    | ${'me@there'}      | ${emailValid}
+    ${'password'} | ${null}            | ${passwordEmpty}
+    ${'password'} | ${'P4ssa'}         | ${passwordSize}
+    ${'password'} | ${'lowercase'}     | ${passwordPattern}
+    ${'password'} | ${'UPPERCASE'}     | ${passwordPattern}
+    ${'password'} | ${'123abc456'}     | ${passwordPattern}
+    ${'password'} | ${'123ABC456'}     | ${passwordPattern}
+  `(
+    'returns "$expected" when $field is "$value" when language is set to italian',
+    async ({ field, value, expected }) => {
+      const payload = fromUtils.getValidPayload();
+      payload[field] = value;
+      const res = await fromUtils.postUser(payload);
+      expect(res.body.validationErrors[field]).toBe(expected);
+    }
+  );
+
+  it(`returns "${emailInUse}" when same email exists and language is set to italian`, async () => {
+    const payload = fromUtils.getValidPayload();
+    await User.create(payload);
+    const res = await fromUtils.postUser(); // Try creating the same user again
+    expect(res.status).toBe(StatusCodes.BAD_REQUEST);
+    expect(res.body.validationErrors.email).toBe(emailInUse);
   });
 });

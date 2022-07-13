@@ -4,7 +4,7 @@ const db = require('./config/database');
 const app = require('./app');
 
 if (process.env.NODE_ENV !== 'production') {
-  db.sync();
+  db.sync({ force: true });
 }
 
 const name = config.get('app').name;

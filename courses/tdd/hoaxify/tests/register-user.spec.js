@@ -81,6 +81,7 @@ describe('User Registration', () => {
 
   /*
   Equivalent
+
   it.each([
     ['username', null, 'Username cannot be empty'],
     ...
@@ -108,5 +109,13 @@ describe('User Registration', () => {
     payload[field] = value;
     const res = await postUser(payload);
     expect(res.body.validationErrors[field]).toBe(expected);
+  });
+
+  it('returns "Email already in use" when same email exists', async () => {
+    const payload = getValidPayload();
+    await User.create(payload);
+    const res = await postUser(); // Try creating the same user again
+    expect(res.status).toBe(StatusCodes.CONFLICT);
+    expect(res.body.validationErrors.email).toBe('Email already in use');
   });
 });

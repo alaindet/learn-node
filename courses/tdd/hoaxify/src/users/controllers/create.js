@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const { check, validationResult } = require('express-validator');
 
+const fromErrors = require('../error-responses');
 const fromService = require('../users.service');
 
 const validateUsername = check('username')
@@ -32,17 +33,19 @@ const validate = [
   validateEmail,
   validatePassword,
   (req, res, next) => {
-    const err = validationResult(req);
-    if (err.isEmpty()) return next();
-    const validationErrors = {};
-    err.array().forEach(e => validationErrors[e.param] = e.msg);
-    return res.status(StatusCodes.BAD_REQUEST).send({ validationErrors });
+    const errors = validationResult(req);
+    if (errors.isEmpty()) return next();
+    return fromErrors.validation(errors, res);
   },
 ];
 
 const handle = async (req, res) => {
-  await fromService.createUser(req.body);
-  return res.status(StatusCodes.CREATED).send({ message: 'User created' });
+  try {
+    await fromService.createUser(req.body);
+    return res.status(StatusCodes.CREATED).send({ message: 'User created' });
+  } catch (err) {
+    return fromErrors.emailAlreadyInUse(res);
+  }
 };
 
 const createUser = [

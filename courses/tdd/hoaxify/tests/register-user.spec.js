@@ -115,7 +115,19 @@ describe('User Registration', () => {
     const payload = getValidPayload();
     await User.create(payload);
     const res = await postUser(); // Try creating the same user again
-    expect(res.status).toBe(StatusCodes.CONFLICT);
+    expect(res.status).toBe(StatusCodes.BAD_REQUEST);
     expect(res.body.validationErrors.email).toBe('Email already in use');
+  });
+
+  it('returns errors for both empty username and same email exists', async () => {
+    const payload = getValidPayload();
+    await User.create(payload);
+    const invalidPayload = { ...payload, username: null };
+    const res = await postUser(invalidPayload);
+    const errs = Object.keys(res.body.validationErrors ?? {});
+    const expected = ['username', 'email'];
+    expect([...errs].sort()).toEqual([...expected].sort());
+    expect(res.body.validationErrors.email).toBe('Email already in use');
+    expect(res.body.validationErrors.username).toBe('Username cannot be empty');
   });
 });

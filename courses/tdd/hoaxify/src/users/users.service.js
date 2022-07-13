@@ -7,6 +7,11 @@ const createUser = async (body) => {
   await User.create({ ...body, password });
 };
 
+const findByEmail = async email => {
+  return await User.findOne({ where: { email } });
+};
+
 module.exports = {
   createUser,
+  findByEmail,
 };

@@ -43,13 +43,9 @@ const validate = [
 ];
 
 const handle = async (req, res) => {
-  try {
-    await fromService.createUser(req.body);
-    return res.status(StatusCodes.CREATED).send({ message: req.t('users.created') });
-  } catch (err) {
-    const validationErrors = { email: err.message };
-    return res.status(StatusCodes.CONFLICT).send({ validationErrors });
-  }
+  await fromService.createUser(req.body);
+  const message = req.t('users_created');
+  return res.status(StatusCodes.CREATED).send({ message });
 };
 
 module.exports = [

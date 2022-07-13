@@ -160,7 +160,7 @@ describe('Internationalization (IT)', () => {
     async ({ field, value, expected }) => {
       const payload = fromUtils.getValidPayload();
       payload[field] = value;
-      const res = await fromUtils.postUser(payload);
+      const res = await fromUtils.postUser(payload, { language: 'it' });
       expect(res.body.validationErrors[field]).toBe(expected);
     }
   );
@@ -168,7 +168,7 @@ describe('Internationalization (IT)', () => {
   it(`returns "${emailInUse}" when same email exists and language is set to italian`, async () => {
     const payload = fromUtils.getValidPayload();
     await User.create(payload);
-    const res = await fromUtils.postUser(); // Try creating the same user again
+    const res = await fromUtils.postUser({ language: 'it' });
     expect(res.status).toBe(StatusCodes.BAD_REQUEST);
     expect(res.body.validationErrors.email).toBe(emailInUse);
   });

@@ -104,4 +104,23 @@ describe('User Registration', () => {
     const res = await postUser(invalidPayload);
     expect(res.body.validationErrors).not.toBeUndefined();
   });
+
+  it.each`
+    field         | value              | expected
+    ${'username'} | ${null}            | ${'Username cannot be empty'}
+    ${'username'} | ${'aa'}            | ${'Username must have min 4 and max 32 characters'}
+    ${'username'} | ${'a'.repeat(35)}  | ${'Username must have min 4 and max 32 characters'}
+    ${'email'}    | ${null}            | ${'Email cannot be empty'}
+    ${'email'}    | ${'mail.com'}      | ${'Email must be valid'}
+    ${'email'}    | ${'user.mail.com'} | ${'Email must be valid'}
+    ${'email'}    | ${'me@there'}      | ${'Email must be valid'}
+    ${'password'} | ${null}            | ${'Password cannot be empty'}
+    ${'password'} | ${'P4ssa'}         | ${'Password must have min 6 characters'}
+    ${'password'} | ${'lowercase'}     | ${'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers'}
+  `('returns $expected when $field is $value', async ({ field, value, expected }) => {
+    const payload = getValidPayload();
+    payload[field] = value;
+    const res = await postUser(payload);
+    expect(res.body.validationErrors[field]).toBe(expected);
+  });
 });

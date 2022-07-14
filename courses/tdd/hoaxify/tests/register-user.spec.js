@@ -22,7 +22,7 @@ describe('User Registration', () => {
 
   it('returns success message when signup request is valid', async () => {
     const res = await fromUtils.postUser();
-    expect(res.body.message).toBe('users.created');
+    expect(res.body.message).toBe('User created'); // TODO: Translate
   });
 
   it('saves the user to the database', async () => {
@@ -168,7 +168,7 @@ describe('Internationalization (IT)', () => {
   it(`returns "${emailInUse}" when same email exists and language is set to italian`, async () => {
     const payload = fromUtils.getValidPayload();
     await User.create(payload);
-    const res = await fromUtils.postUser({ language: 'it' });
+    const res = await fromUtils.postUser(payload, { language: 'it' });
     expect(res.status).toBe(StatusCodes.BAD_REQUEST);
     expect(res.body.validationErrors.email).toBe(emailInUse);
   });

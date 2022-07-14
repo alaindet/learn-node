@@ -1,5 +1,6 @@
 module.exports = {
-  fallback: 'en',
+  fallbackLng: 'en',
+  supportedLngs: ['en', 'it'],
   lng: 'en',
   ns: ['translation'],
   defaultNS: 'translation',
@@ -7,6 +8,6 @@ module.exports = {
     loadPath: './locales/{{lng}}.json',
   },
   detection: {
-    lookupHaeder: 'accept-language',
+    lookupHeader: 'accept-language',
   },
 };

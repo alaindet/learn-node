@@ -44,7 +44,7 @@ const validate = [
 
 const handle = async (req, res) => {
   await fromService.createUser(req.body);
-  const message = req.t('users_created');
+  const message = req.t('users.created');
   return res.status(StatusCodes.CREATED).send({ message });
 };
 

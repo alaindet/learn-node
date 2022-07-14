@@ -13,5 +13,9 @@
     "storage": "./database/database.sqlite",
     "dialect": "sqlite",
     "logs": false
+  },
+  "email": {
+    "fromName": "Hoaxify",
+    "fromEmail": "support@hoaxify.example"
   }
 }

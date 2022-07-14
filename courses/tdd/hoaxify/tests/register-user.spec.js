@@ -79,6 +79,9 @@ describe('User Registration', () => {
     await fromUtils.postUser(payload);
     const lastMail = nodemailerStub.interactsWithMail.lastMail();
     expect(lastMail.to[0]).toContain(payload.email);
+    const users = await User.findAll();
+    const user = users[0];
+    expect(lastMail.content).toContain(user.activationToken);
   });
 
   it('returns errors when username and email are invalid', async () => {

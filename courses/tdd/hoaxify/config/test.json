@@ -13,5 +13,9 @@
     "storage": ":memory:",
     "dialect": "sqlite",
     "logs": false
+  },
+  "email": {
+    "fromName": "Hoaxify",
+    "fromEmail": "support@hoaxify.example"
   }
 }

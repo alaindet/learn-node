@@ -1,6 +1,6 @@
 {
   "users": {
-    "created": "User created"
+    "createdSuccess": "User created"
   },
   "validation": {
     "usernameEmpty": "Username cannot be empty",

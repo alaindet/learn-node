@@ -1,6 +1,6 @@
 {
   "users": {
-    "created": "Utente creato"
+    "createdSuccess": "Utente creato"
   },
   "validation": {
     "usernameEmpty": "Username obbligatorio",

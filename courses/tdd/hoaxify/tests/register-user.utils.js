@@ -1,8 +1,6 @@
 const request = require('supertest');
 
 const app = require('../src/app');
-
-// Bootstrap
 const apiCfg = require('../src/config/api');
 
 const getValidPayload = () => ({

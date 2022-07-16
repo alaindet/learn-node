@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const { check, validationResult } = require('express-validator');
 
-const fromErrors = require('../error-responses');
+const { sendValidationErrors } = require('../../common/validation-errors');
 const fromService = require('../users.service');
 const fromValidators = require('../validators/user-email-exists');
 
@@ -38,14 +38,21 @@ const validate = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (errors.isEmpty()) return next();
-    return fromErrors.validation(req, res, errors);
+    return sendValidationErrors(req, res, errors);
   },
 ];
 
 const handle = async (req, res) => {
-  await fromService.createUser(req.body);
-  const message = req.t('users.createdSuccess');
-  return res.status(StatusCodes.CREATED).send({ message });
+  try {
+    await fromService.createUser(req.body);
+    const message = req.t('users.createdSuccess');
+    return res.status(StatusCodes.CREATED).send({ message });
+  }
+  
+  // Note: 502 Bad Gateway implies the email server did not work
+  catch(err) {
+    return res.status(StatusCodes.BAD_GATEWAY).send();
+  }
 };
 
 module.exports = [

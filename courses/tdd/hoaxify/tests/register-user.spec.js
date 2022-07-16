@@ -1,6 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
 const bcrypt = require('bcrypt');
-const nodemailerStub = require('nodemailer-stub');
 
 const db = require('../src/config/database');
 const { User } = require('../src/users/user.model');
@@ -49,39 +48,6 @@ describe('User Registration', () => {
     expect(user.username).toBe(username);
     expect(user.email).toBe(email);
     expect(bcrypt.compareSync(password, user.password)).toBe(true);
-  });
-
-  it('creates new user in inactive mode', async () => {
-    await fromUtils.postUser();
-    const users = await User.findAll();
-    const user = users[0];
-    expect(user.inactive).toBe(true);
-  });
-
-  it('creates new user and forces the inactive mode', async () => {
-    const payload = { ...fromUtils.getValidPayload(), inactive: false };
-    await fromUtils.postUser(payload);
-    const users = await User.findAll();
-    const user = users[0];
-    expect(user.inactive).toBe(true);
-  });
-
-  it('creates an activation token for user', async () => {
-    const payload = { ...fromUtils.getValidPayload(), inactive: false };
-    await fromUtils.postUser(payload);
-    const users = await User.findAll();
-    const user = users[0];
-    expect(user.activationToken).toBeTruthy();
-  });
-
-  it('sends an account activation email with activation token', async () => {
-    const payload = fromUtils.getValidPayload();
-    await fromUtils.postUser(payload);
-    const lastMail = nodemailerStub.interactsWithMail.lastMail();
-    expect(lastMail.to[0]).toContain(payload.email);
-    const users = await User.findAll();
-    const user = users[0];
-    expect(lastMail.content).toContain(user.activationToken);
   });
 
   it('returns errors when username and email are invalid', async () => {

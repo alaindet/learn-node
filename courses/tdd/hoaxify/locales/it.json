@@ -1,6 +1,7 @@
 {
   "users": {
-    "createdSuccess": "Utente creato"
+    "createdSuccess": "Utente creato",
+    "activationEmailError": "Errore durante l'invio della mail di attivazione"
   },
   "validation": {
     "usernameEmpty": "Username obbligatorio",

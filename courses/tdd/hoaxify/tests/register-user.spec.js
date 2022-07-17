@@ -1,6 +1,8 @@
 const { StatusCodes } = require('http-status-codes');
 const bcrypt = require('bcrypt');
 
+const enTranslation = require('../locales/en.json');
+const itTranslation = require('../locales/it.json');
 const db = require('../src/config/database');
 const { User } = require('../src/users/user.model');
 const fromUtils = require('./register-user.utils');
@@ -22,7 +24,7 @@ describe('User Registration', () => {
 
   it('returns success message when signup request is valid', async () => {
     const res = await fromUtils.postUser();
-    expect(res.body.message).toBe('User created'); // TODO: Translate
+    expect(res.body.message).toBe(enTranslation.users.createdSuccess);
   });
 
   it('saves the user to the database', async () => {
@@ -67,14 +69,14 @@ describe('User Registration', () => {
     expect(res.body.validationErrors).not.toBeUndefined();
   });
 
-  const usernameEmpty = 'Username cannot be empty';
-  const usernameSize = 'Username must have min 4 and max 32 characters';
-  const emailEmpty = 'Email cannot be empty';
-  const emailValid = 'Email must be valid';
-  const emailInUse = 'Email already in use';
-  const passwordEmpty = 'Password cannot be empty';
-  const passwordSize = 'Password must have min 6 characters';
-  const passwordPattern = 'Password must have 1+ uppercase, 1+ lowercase and 1+ numbers';
+  const usernameEmpty = enTranslation.validation.usernameEmpty;
+  const usernameSize = enTranslation.validation.usernameSize;
+  const emailEmpty = enTranslation.validation.emailEmpty;
+  const emailValid = enTranslation.validation.emailValid;
+  const emailInUse = enTranslation.validation.emailInUse;
+  const passwordEmpty = enTranslation.validation.passwordEmpty;
+  const passwordSize = enTranslation.validation.passwordSize;
+  const passwordPattern = enTranslation.validation.passwordPattern;
 
   /*
   Equivalent
@@ -129,16 +131,16 @@ describe('User Registration', () => {
   });
 });
 
-describe('Internationalization (IT)', () => {
+describe('User Registration (i18n)', () => {
 
-  const usernameEmpty = 'Username obbligatorio';
-  const usernameSize = 'Lo username deve contenere da 4 a 32 caratteri';
-  const emailEmpty = 'Email obbligatoria';
-  const emailValid = 'La email deve essere valida';
-  const emailInUse = 'Email già in uso';
-  const passwordEmpty = 'Password obbligatoria';
-  const passwordSize = 'La password deve contenere almeno 6 caratteri';
-  const passwordPattern = 'La password deve contenere 1+ maiuscole, 1+ minuscole e 1+ numeri';
+  const usernameEmpty = itTranslation.validation.usernameEmpty;
+  const usernameSize = itTranslation.validation.usernameSize;
+  const emailEmpty = itTranslation.validation.emailEmpty;
+  const emailValid = itTranslation.validation.emailValid;
+  const emailInUse = itTranslation.validation.emailInUse;
+  const passwordEmpty = itTranslation.validation.passwordEmpty;
+  const passwordSize = itTranslation.validation.passwordSize;
+  const passwordPattern = itTranslation.validation.passwordPattern;
 
   it.each`
     field         | value              | expected

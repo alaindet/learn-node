@@ -5,6 +5,8 @@ const db = require('../src/config/database');
 const { User } = require('../src/users/user.model');
 const fromUtils = require('./register-user.utils');
 const emailService = require('../src/email/email.service');
+const enTranslation = require('../locales/en.json');
+const itTranslation = require('../locales/it.json');
 
 beforeAll(() => {
   return db.sync();
@@ -56,5 +58,41 @@ describe('User account activation', () => {
     const res = await fromUtils.postUser();
     expect(res.status).toBe(StatusCodes.BAD_GATEWAY);
     mockSendAccountActivation.mockRestore();
+  });
+
+  it('returns email failure message when sending email fails', async () => {
+    const errorMessage = enTranslation.users.activationEmailError;
+    const mockSendAccountActivation = jest
+      .spyOn(emailService, 'sendAccountActivation')
+      .mockRejectedValue({ message: errorMessage });
+
+    const res = await fromUtils.postUser();
+    mockSendAccountActivation.mockRestore();
+    expect(res.body.message).toBe(errorMessage);
+  });
+
+  it('doesn\'t save user to db if activation email fails to send', async () => {
+    const mockSendAccountActivation = jest
+      .spyOn(emailService, 'sendAccountActivation')
+      .mockRejectedValue({ message: 'Could not send activation email' });
+
+    const res = await fromUtils.postUser();
+    mockSendAccountActivation.mockRestore();
+    const users = await User.findAll();
+    expect(users.length).toBe(0);
+  });
+});
+
+describe('User account activation (i18n)', () => {
+  it('returns email failure message when sending email fails', async () => {
+    const errorMessage = itTranslation.users.activationEmailError;
+    const mockSendAccountActivation = jest
+      .spyOn(emailService, 'sendAccountActivation')
+      .mockRejectedValue({ message: errorMessage });
+
+    const payload = fromUtils.getValidPayload();
+    const res = await fromUtils.postUser(payload, { language: 'it' });
+    mockSendAccountActivation.mockRestore();
+    expect(res.body.message).toBe(errorMessage);
   });
 });

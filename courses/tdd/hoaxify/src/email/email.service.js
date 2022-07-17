@@ -1,5 +1,3 @@
-const nodemailer = require('nodemailer');
-const nodemailerStub = require('nodemailer-stub');
 const config = require('config');
 
 const { transporter } = require('../config/email');

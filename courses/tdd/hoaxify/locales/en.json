@@ -1,6 +1,7 @@
 {
   "users": {
-    "createdSuccess": "User created"
+    "createdSuccess": "User created",
+    "activationEmailError": "Error while sending activation email"
   },
   "validation": {
     "usernameEmpty": "Username cannot be empty",
@@ -11,5 +12,8 @@
     "passwordEmpty": "Password cannot be empty",
     "passwordSize": "Password must have min 6 characters",
     "passwordPattern": "Password must have 1+ uppercase, 1+ lowercase and 1+ numbers"
+  },
+  "email": {
+    "sendFailure": "Error while sending email"
   }
 }

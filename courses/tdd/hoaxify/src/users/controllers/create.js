@@ -51,7 +51,8 @@ const handle = async (req, res) => {
   
   // Note: 502 Bad Gateway implies the email server did not work
   catch(err) {
-    return res.status(StatusCodes.BAD_GATEWAY).send();
+    const message = req.t(err.message);
+    return res.status(StatusCodes.BAD_GATEWAY).send({ message });
   }
 };
 

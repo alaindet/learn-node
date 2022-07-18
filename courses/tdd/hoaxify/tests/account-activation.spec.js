@@ -1,19 +1,49 @@
 const { StatusCodes } = require('http-status-codes');
-const nodemailerStub = require('nodemailer-stub');
+const SMTPServer = require('smtp-server').SMTPServer;
+const config = require('config');
 
 const db = require('../src/config/database');
 const { User } = require('../src/users/user.model');
 const fromUtils = require('./register-user.utils');
-const emailService = require('../src/email/email.service');
 const enTranslation = require('../locales/en.json');
 const itTranslation = require('../locales/it.json');
 
-beforeAll(() => {
-  return db.sync();
+let lastMail, emailServer;
+let forceEmailFailure = false;
+
+beforeAll(async () => {
+  const { host, port } = config.get('email');
+
+  emailServer = new SMTPServer({
+    authOptional: true,
+    onData(stream, session, callback) {
+      let mailBody;
+      stream.on('data', (data) => {
+        mailBody += data.toString();
+      });
+      stream.on('end', () => {
+        if (forceEmailFailure) {
+          const err = new Error('Invalid email');
+          err.responseCode = 553;
+          return callback(err);
+        }
+        lastMail = mailBody;
+        callback();
+      });
+    },
+  });
+
+  await emailServer.listen(port, host);
+  await db.sync();
 });
 
 beforeEach(() => {
+  forceEmailFailure = false;
   return User.destroy({ truncate: true });
+});
+
+afterAll(async () => {
+  await emailServer.close();
 });
 
 describe('User account activation', () => {
@@ -43,41 +73,28 @@ describe('User account activation', () => {
   it('sends an account activation email with activation token', async () => {
     const payload = fromUtils.getValidPayload();
     await fromUtils.postUser(payload);
-    const lastMail = nodemailerStub.interactsWithMail.lastMail();
-    expect(lastMail.to[0]).toContain(payload.email);
     const users = await User.findAll();
     const user = users[0];
-    expect(lastMail.content).toContain(user.activationToken);
+    expect(lastMail).toContain(payload.email);
+    expect(lastMail).toContain(user.activationToken);
   });
 
   it('returns 502 Bad Gateway when sending email fails', async () => {
-    const mockSendAccountActivation = jest
-      .spyOn(emailService, 'sendAccountActivation')
-      .mockRejectedValue({ message: 'Failed to deliver email' });
-
+    forceEmailFailure = true;
     const res = await fromUtils.postUser();
     expect(res.status).toBe(StatusCodes.BAD_GATEWAY);
-    mockSendAccountActivation.mockRestore();
   });
 
   it('returns email failure message when sending email fails', async () => {
     const errorMessage = enTranslation.users.activationEmailError;
-    const mockSendAccountActivation = jest
-      .spyOn(emailService, 'sendAccountActivation')
-      .mockRejectedValue({ message: errorMessage });
-
+    forceEmailFailure = true;
     const res = await fromUtils.postUser();
-    mockSendAccountActivation.mockRestore();
     expect(res.body.message).toBe(errorMessage);
   });
 
   it('doesn\'t save user to db if activation email fails to send', async () => {
-    const mockSendAccountActivation = jest
-      .spyOn(emailService, 'sendAccountActivation')
-      .mockRejectedValue({ message: 'Could not send activation email' });
-
-    const res = await fromUtils.postUser();
-    mockSendAccountActivation.mockRestore();
+    forceEmailFailure = true;
+    await fromUtils.postUser();
     const users = await User.findAll();
     expect(users.length).toBe(0);
   });
@@ -86,13 +103,9 @@ describe('User account activation', () => {
 describe('User account activation (i18n)', () => {
   it('returns email failure message when sending email fails', async () => {
     const errorMessage = itTranslation.users.activationEmailError;
-    const mockSendAccountActivation = jest
-      .spyOn(emailService, 'sendAccountActivation')
-      .mockRejectedValue({ message: errorMessage });
-
+    forceEmailFailure = true;
     const payload = fromUtils.getValidPayload();
     const res = await fromUtils.postUser(payload, { language: 'it' });
-    mockSendAccountActivation.mockRestore();
     expect(res.body.message).toBe(errorMessage);
   });
 });

@@ -34,17 +34,17 @@ describe('User Registration', () => {
   });
 
   it('saves the username and email to the database', async () => {
+    const { username, email } = fromUtils.getValidPayload();
     await fromUtils.postUser();
     const users = await User.findAll();
-    const { username, email } = fromUtils.getValidPayload();
     const user = users[0];
     expect(user.username).toBe(username);
     expect(user.email).toBe(email);
   });
 
   it('hashes the password in database', async () => {
-    await fromUtils.postUser();
     const { username, email, password } = fromUtils.getValidPayload();
+    await fromUtils.postUser();
     const users = await User.findAll();
     const user = users[0];
     expect(user.username).toBe(username);

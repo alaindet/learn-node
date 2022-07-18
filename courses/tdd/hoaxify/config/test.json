@@ -16,6 +16,8 @@
   },
   "email": {
     "fromName": "Hoaxify",
-    "fromEmail": "support@hoaxify.example"
+    "fromEmail": "support@hoaxify.example",
+    "host": "localhost",
+    "port": 8587
   }
 }

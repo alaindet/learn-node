@@ -1,5 +1,5 @@
 const emailException = (message) => {
-  return Error(message ?? 'email.sendFailure');
+  return new Error(message ?? 'email.sendFailure');
 };
 
 module.exports = {

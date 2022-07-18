@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const sequelize = require('../config/database');
 const emailService = require('../email/email.service');
 const { User } = require('./user.model');
-const emailException = require('../email/email.exception');
+const { emailException } = require('../email/email.exception');
 
 const generateActivationToken = len => {
   return crypto.randomBytes(len).toString('hex').substring(0, len);
@@ -17,12 +17,12 @@ const createUser = async (body) => {
   const user = { ...body, password, inactive, activationToken };
   const transaction = await sequelize.transaction();
   try {
-    await User.create(user, { transation });
+    await User.create(user, { transaction });
     await emailService.sendAccountActivation(user.email, user.activationToken);
     await transaction.commit();
   } catch (err) {
     await transaction.rollback();
-    throw new emailException('users.activationEmailError');
+    throw emailException('users.activationEmailError');
   }
 };
 

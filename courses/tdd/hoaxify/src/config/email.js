@@ -5,7 +5,7 @@ const { host, port } = config.get('email');
 
 const transporter = nodemailer.createTransport({
   host,
-  port: +port,
+  port,
   tls: {
     rejectUnauthorized: false,
   },

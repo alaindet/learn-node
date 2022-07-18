@@ -12,8 +12,6 @@ let lastMail, emailServer;
 let forceEmailFailure = false;
 
 beforeAll(async () => {
-  const { host, port } = config.get('email');
-
   emailServer = new SMTPServer({
     authOptional: true,
     onData(stream, session, callback) {
@@ -22,8 +20,8 @@ beforeAll(async () => {
         mailBody += data.toString();
       });
       stream.on('end', () => {
-        if (forceEmailFailure) {
-          const err = new Error('Invalid email');
+        if (simulateSmtpFailure) {
+          const err = new Error('Invalid mailbox');
           err.responseCode = 553;
           return callback(err);
         }
@@ -33,7 +31,7 @@ beforeAll(async () => {
     },
   });
 
-  await emailServer.listen(port, host);
+  await emailServer.listen(8587, 'localhost');
   await db.sync();
 });
 
